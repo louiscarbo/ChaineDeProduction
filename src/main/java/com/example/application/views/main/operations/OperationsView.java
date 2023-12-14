@@ -2,13 +2,17 @@ package com.example.application.views.main.operations;
 
 import com.example.application.model.SamplePerson;
 import com.example.application.views.main.MainLayout;
-
+import com.example.application.views.main.machines.NewMachineDialog;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.Uses;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -17,6 +21,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 @PageTitle("Opérations")
 @Route(value = "operations", layout = MainLayout.class)
 @Uses(Icon.class)
+
 public class OperationsView extends Div {
 
     private Grid<SamplePerson> grid;
@@ -25,10 +30,11 @@ public class OperationsView extends Div {
         setSizeFull();
         addClassNames("operations-view");
 
-        VerticalLayout layout = new VerticalLayout(createGrid());
+        VerticalLayout layout = new VerticalLayout(createButton(), createGrid());
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setSpacing(false);
+
         add(layout);
     }
 
@@ -51,6 +57,21 @@ public class OperationsView extends Div {
 
     private void refreshGrid() {
         grid.getDataProvider().refreshAll();
+    }
+
+    private Component createButton() {
+        Dialog dialog = new NewOperationDialog();
+
+        Button button = new Button(
+            "Ajouter une opération",
+            new Icon(VaadinIcon.PLUS),
+            e -> dialog.open()
+        );
+
+        button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        button.getStyle().set("margin-left", "10px");
+                
+        return button;
     }
 
 }

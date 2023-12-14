@@ -1,41 +1,24 @@
-package com.example.application.views.main.machines;
+package com.example.application.views.main.operations;
 
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.Route;
 
-@Route(value = "nouvellemachine")
-public class NewMachinePopupView extends Div {
-
-    public void NewMachinePopupView() {
-        Dialog dialog = new Dialog();
-
-        dialog.setHeaderTitle("Nouvelle Machine");
+public class NewOperationDialog extends Dialog {
+    
+    public NewOperationDialog() {
+        this.setHeaderTitle("Nouvelle Opération");
 
         VerticalLayout dialogLayout = createDialogLayout();
-        dialog.add(dialogLayout);
+        this.add(dialogLayout);
 
-        Button saveButton = createSaveButton(dialog);
-        Button cancelButton = new Button("Annuler", e -> dialog.close());
-        dialog.getFooter().add(cancelButton);
-        dialog.getFooter().add(saveButton);
-
-        Button button = new Button("Ajouter une machine", e -> dialog.open());
-
-        add(dialog, button);
-
-        dialog.open();
+        Button saveButton = createSaveButton(this);
+        Button cancelButton = new Button("Annuler", e -> this.close());
+        this.getFooter().add(cancelButton);
+        this.getFooter().add(saveButton);
     }
 
     private static VerticalLayout createDialogLayout() {
