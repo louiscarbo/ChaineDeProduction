@@ -24,7 +24,4 @@ public class Operation {
     public void setMachines(Machine[] machines) {
         this.machines = machines;
     }
-
-    
-    
 }

@@ -1,8 +1,10 @@
 package fr.insa.developpement.views.operations;
 
+import fr.insa.developpement.model.classes.Operation;
 import fr.insa.developpement.model.classes.TypeOperation;
 import fr.insa.developpement.views.main.MainLayout;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.Uses;
@@ -12,7 +14,9 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -23,7 +27,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 
 public class OperationsView extends Div {
 
-    private Grid<TypeOperation> grid;
+    private Grid<Operation> grid;
 
     public OperationsView() {
         setSizeFull();
@@ -38,10 +42,9 @@ public class OperationsView extends Div {
     }
 
     private Component createGrid() {
-        grid = new Grid<>(TypeOperation.class, false);
-        grid.addColumn("nom").setAutoWidth(true);
-        grid.addColumn("description").setAutoWidth(true);
-        grid.addColumn("duree").setAutoWidth(true);
+        grid = new Grid<>(Operation.class, false);
+        grid.addColumn("type").setAutoWidth(true);
+        grid.addColumn("machines").setAutoWidth(true);
 
         grid.setItems();
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
@@ -51,10 +54,10 @@ public class OperationsView extends Div {
     }
 
     private Component createButton() {
-        Dialog dialog = new NewOperationDialog();
+        Dialog dialog = new NewOperationTypeDialog();
 
         Button button = new Button(
-            "Ajouter une opération",
+            "Ajouter un type d'opération",
             new Icon(VaadinIcon.PLUS),
             e -> dialog.open()
         );
