@@ -1,4 +1,4 @@
-package com.example.application.views.main.machines;
+package fr.insa.developpement.views.machines;
 
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;

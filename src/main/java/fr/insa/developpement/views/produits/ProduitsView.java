@@ -1,7 +1,7 @@
-package com.example.application.views.main.produits;
+package fr.insa.developpement.views.produits;
 
-import com.example.application.model.SamplePerson;
-import com.example.application.views.main.MainLayout;
+import fr.insa.developpement.model.SamplePerson;
+import fr.insa.developpement.views.main.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;

@@ -1,4 +1,4 @@
-package com.example.application.views.main.produits;
+package fr.insa.developpement.views.produits;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
