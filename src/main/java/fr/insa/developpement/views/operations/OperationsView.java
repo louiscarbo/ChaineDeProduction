@@ -1,6 +1,6 @@
 package fr.insa.developpement.views.operations;
 
-import fr.insa.developpement.model.SamplePerson;
+import fr.insa.developpement.model.classes.TypeOperation;
 import fr.insa.developpement.views.main.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -23,7 +23,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 
 public class OperationsView extends Div {
 
-    private Grid<SamplePerson> grid;
+    private Grid<TypeOperation> grid;
 
     public OperationsView() {
         setSizeFull();
@@ -38,14 +38,10 @@ public class OperationsView extends Div {
     }
 
     private Component createGrid() {
-        grid = new Grid<>(SamplePerson.class, false);
-        grid.addColumn("firstName").setAutoWidth(true);
-        grid.addColumn("lastName").setAutoWidth(true);
-        grid.addColumn("email").setAutoWidth(true);
-        grid.addColumn("phone").setAutoWidth(true);
-        grid.addColumn("dateOfBirth").setAutoWidth(true);
-        grid.addColumn("occupation").setAutoWidth(true);
-        grid.addColumn("role").setAutoWidth(true);
+        grid = new Grid<>(TypeOperation.class, false);
+        grid.addColumn("nom").setAutoWidth(true);
+        grid.addColumn("description").setAutoWidth(true);
+        grid.addColumn("duree").setAutoWidth(true);
 
         grid.setItems();
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);

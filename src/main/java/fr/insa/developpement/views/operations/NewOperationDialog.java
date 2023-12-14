@@ -22,7 +22,6 @@ public class NewOperationDialog extends Dialog {
     }
 
     private static VerticalLayout createDialogLayout() {
-
         TextField firstNameField = new TextField("Nom");
         TextField lastNameField = new TextField("Description");
         //TODO Ajouter un picker pour le type d'opération
