@@ -18,9 +18,6 @@
  */
 package fr.insa.beuvron.utils.exceptions;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author francois
