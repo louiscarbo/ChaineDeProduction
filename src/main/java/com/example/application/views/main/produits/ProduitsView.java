@@ -2,13 +2,17 @@ package com.example.application.views.main.produits;
 
 import com.example.application.model.SamplePerson;
 import com.example.application.views.main.MainLayout;
-
+import com.example.application.views.main.operations.NewOperationDialog;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.Uses;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -25,7 +29,7 @@ public class ProduitsView extends Div {
         setSizeFull();
         addClassNames("produits-view");
 
-        VerticalLayout layout = new VerticalLayout(createGrid());
+        VerticalLayout layout = new VerticalLayout(createButton(), createGrid());
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setSpacing(false);
@@ -51,6 +55,21 @@ public class ProduitsView extends Div {
 
     private void refreshGrid() {
         grid.getDataProvider().refreshAll();
+    }
+
+    private Component createButton() {
+        Dialog dialog = new NewProduitDialog();
+
+        Button button = new Button(
+            "Ajouter un produit",
+            new Icon(VaadinIcon.PLUS),
+            e -> dialog.open()
+        );
+
+        button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        button.getStyle().set("margin-left", "10px");
+                
+        return button;
     }
 
 }
