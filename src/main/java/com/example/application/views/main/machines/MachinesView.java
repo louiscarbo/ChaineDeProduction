@@ -16,7 +16,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 
 @PageTitle("Machines")
 @Route(value = "machines", layout = MainLayout.class)
@@ -52,10 +51,6 @@ public class MachinesView extends Div {
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 
         return grid;
-    }
-
-    private void refreshGrid() {
-        grid.getDataProvider().refreshAll();
     }
 
     private Component createButton() {

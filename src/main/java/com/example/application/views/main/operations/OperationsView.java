@@ -2,7 +2,6 @@ package com.example.application.views.main.operations;
 
 import com.example.application.model.SamplePerson;
 import com.example.application.views.main.MainLayout;
-import com.example.application.views.main.machines.NewMachineDialog;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -53,10 +52,6 @@ public class OperationsView extends Div {
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 
         return grid;
-    }
-
-    private void refreshGrid() {
-        grid.getDataProvider().refreshAll();
     }
 
     private Component createButton() {
