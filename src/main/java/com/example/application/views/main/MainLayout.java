@@ -37,7 +37,7 @@ public class MainLayout extends AppLayout {
 
     private void addDrawerContent() {
         H1 appName = new H1("Chaîne de Production");
-        appName.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
+        appName.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.MEDIUM);
         Header header = new Header(appName);
 
         Scroller scroller = new Scroller(createNavigation());
@@ -49,7 +49,7 @@ public class MainLayout extends AppLayout {
         SideNav nav = new SideNav();
 
         nav.addItem(new SideNavItem("Machines", "machines"));
-        nav.addItem(new SideNavItem("Operations", "operations"));
+        nav.addItem(new SideNavItem("Opérations", "operations"));
         nav.addItem(new SideNavItem("Produits", "produits"));
 
         return nav;
