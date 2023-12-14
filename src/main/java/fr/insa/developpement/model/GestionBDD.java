@@ -21,6 +21,8 @@ package fr.insa.developpement.model;
 import fr.insa.beuvron.utils.ConsoleFdB;
 import fr.insa.beuvron.utils.exceptions.ExceptionsUtils;
 import fr.insa.beuvron.utils.list.ListUtils;
+import fr.insa.developpement.model.classes.Utilisateur;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
