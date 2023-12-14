@@ -13,10 +13,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
-/**
- * The main view is a top-level placeholder for other views.
- */
-
 @PageTitle("Main")
 @Route(value = "")
 public class MainLayout extends AppLayout {
