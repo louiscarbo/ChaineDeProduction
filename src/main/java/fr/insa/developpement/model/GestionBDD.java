@@ -21,6 +21,8 @@ package fr.insa.developpement.model;
 import fr.insa.beuvron.utils.ConsoleFdB;
 import fr.insa.beuvron.utils.exceptions.ExceptionsUtils;
 import fr.insa.beuvron.utils.list.ListUtils;
+import fr.insa.developpement.model.classes.Machine;
+import fr.insa.developpement.model.classes.TypeOperation;
 import fr.insa.developpement.model.classes.Utilisateur;
 
 import java.io.BufferedReader;
@@ -88,28 +90,36 @@ public class GestionBDD {
         this.conn.setAutoCommit(false);
         try (Statement st = this.conn.createStatement()) {
             st.executeUpdate(
-                    "create table li_utilisateur (\n"
+                    "create table machine (\n"
                     + "    id integer not null primary key AUTO_INCREMENT,\n"
-                    + "    nom varchar(30) not null unique,\n"
-                    + "    pass varchar(30) not null\n"
+                    + "    ref varchar(30) not null unique,\n"
+                    + "    des varchar(100) not null,\n"
+                    + "    puissance double not null\n"   
+                    + ")\n"
+            );
+             st.executeUpdate(
+                    "create table realise (\n"
+                    + "    idMachine integer not null,\n"
+                    + "    idType integer not null unique,\n"
+                    + "    duree integer not null\n"        
                     + ")\n"
             );
             st.executeUpdate(
-                    "create table li_likes (\n"
-                    + "    u1 integer not null,\n"
-                    + "    u2 integer not null\n"
+                    "create table typeoperation (\n"
+                    + "    id integer not null primary key AUTO_INCREMENT,\n"
+                    + "    des integer not null\n"
                     + ")\n"
             );
             this.conn.commit();
             st.executeUpdate(
-                    "alter table li_likes \n"
-                    + "    add constraint fk_li_likes_u1 \n"
-                    + "    foreign key (u1) references li_utilisateur(id) \n"
+                    "alter table machine \n"
+                    + "    add constraint fk_machine_id \n"
+                    + "    foreign key (id) references realise(idMachine) \n"
             );
             st.executeUpdate(
-                    "alter table li_likes \n"
-                    + "    add constraint fk_li_likes_u2 \n"
-                    + "    foreign key (u2) references li_utilisateur(id) \n"
+                    "alter table TypeOperation \n"
+                    + "    add constraint fk_typeoperation_id \n"
+                    + "    foreign key (id) references realise(idType) \n"
             );
         } catch (SQLException ex) {
             this.conn.rollback();
@@ -132,32 +142,39 @@ public class GestionBDD {
             // puis les tables
             // suppression des liens
             try {
-                st.executeUpdate("alter table li_likes drop constraint fk_li_likes_u1");
+                st.executeUpdate("alter table Machine drop constraint fk_machine_id");
             } catch (SQLException ex) {
                 // nothing to do : maybe the constraint was not created
             }
             try {
-                st.executeUpdate("alter table li_likes drop constraint fk_li_likes_u2");
+                st.executeUpdate("alter table li_likes drop constraint fk_typeoperation_id");
             } catch (SQLException ex) {
             }
             // je peux maintenant supprimer les tables
             try {
-                st.executeUpdate("drop table li_likes");
+                st.executeUpdate("drop table machine");
             } catch (SQLException ex) {
             }
             try {
-                st.executeUpdate("drop table li_utilisateur");
+                st.executeUpdate("drop table realise");
+            } catch (SQLException ex) {
+            }
+            try {
+                st.executeUpdate("drop table typeoperation");
             } catch (SQLException ex) {
             }
         }
     }
 
     public void initTest() throws SQLException {
-        Utilisateur fdb = new Utilisateur("fdb", "pass");
-        fdb.saveInDBV1(this.conn);
-        Utilisateur toto = new Utilisateur("toto", "pass");
-        toto.saveInDBV1(this.conn);
-    }
+        TypeOperation t1= new TypeOperation(1, "fraisage");
+        t1.save(conn);
+        Machine m1 =new Machine(1, "rapide","F01", 20);
+        m1.save(conn);
+        this.conn.setAutoCommit(true);
+
+   }  
+    
 
     public void razBDD() throws SQLException {
         this.deleteSchema();
