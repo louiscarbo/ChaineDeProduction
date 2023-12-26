@@ -110,6 +110,20 @@ public class GestionBDD {
                     + "    des integer not null\n"
                     + ")\n"
             );
+             st.executeUpdate(
+                    "create table produit (\n"
+                    + "    id integer not null primary key AUTO_INCREMENT,\n"
+                    + "    ref varchar(30) not null unique,\n"
+                    + "    des varchar(100) not null,\n"  
+                    + ")\n"
+            );
+            st.executeUpdate(
+                    "create table operation (\n"
+                    + "    id integer not null primary key AUTO_INCREMENT,\n"
+                    + "    idType integer not null unique,\n"
+                    + "    idproduit integer not null unique,\n"  
+                    + ")\n"
+            );
             this.conn.commit();
             st.executeUpdate(
                     "alter table machine \n"
@@ -117,9 +131,14 @@ public class GestionBDD {
                     + "    foreign key (id) references realise(idMachine) \n"
             );
             st.executeUpdate(
-                    "alter table TypeOperation \n"
+                    "alter table Typeoperation \n"
                     + "    add constraint fk_typeoperation_id \n"
                     + "    foreign key (id) references realise(idType) \n"
+            );
+             st.executeUpdate(
+                    "alter table produit \n"
+                    + "    add constraint fk_produit_id \n"
+                    + "    foreign key (id) references realise(id) \n"
             );
         } catch (SQLException ex) {
             this.conn.rollback();
@@ -142,12 +161,12 @@ public class GestionBDD {
             // puis les tables
             // suppression des liens
             try {
-                st.executeUpdate("alter table Machine drop constraint fk_machine_id");
+                st.executeUpdate("alter table machine drop constraint fk_machine_id");
             } catch (SQLException ex) {
                 // nothing to do : maybe the constraint was not created
             }
             try {
-                st.executeUpdate("alter table li_likes drop constraint fk_typeoperation_id");
+                st.executeUpdate("alter table typeoperation drop constraint fk_typeoperation_id");
             } catch (SQLException ex) {
             }
             // je peux maintenant supprimer les tables
@@ -161,6 +180,14 @@ public class GestionBDD {
             }
             try {
                 st.executeUpdate("drop table typeoperation");
+            } catch (SQLException ex) {
+            }
+             try {
+                st.executeUpdate("drop table produit");
+            } catch (SQLException ex) {
+            }
+             try {
+                st.executeUpdate("drop table operation");
             } catch (SQLException ex) {
             }
         }
