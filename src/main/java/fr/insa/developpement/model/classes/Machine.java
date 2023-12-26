@@ -2,6 +2,7 @@ package fr.insa.developpement.model.classes;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 
 public class Machine {
@@ -28,14 +29,15 @@ public class Machine {
     }
 
     public Machine(String des, String ref, double puissance) {
-        this(-1,des,ref,puissance);
+        this.id = -1;
+        this.des = des;
+        this.ref = ref;
+        this.puissance = puissance;
     }
-    
-    
+
     public void save(Connection con) throws SQLException{
-        
-        try (PreparedStatement pst=con.prepareStatement(
-                "insert into machine (ref,des,puissance) VALUES (?,?,?)")){
+        try (PreparedStatement pst = con.prepareStatement(
+                "INSERT INTO machine (ref, des, puissance) VALUES (?, ?, ?)")){
             pst.setString(1, this.ref);
             pst.setString(2, this.des);
             pst.setDouble(3, this.puissance);
@@ -43,8 +45,7 @@ public class Machine {
         }
     }
     
-    public void fillMachineTable(Connection con) throws SQLException {
-    // Begin transaction by setting auto-commit to false
+    public static void fillMachineTable(Connection con) throws SQLException {
     con.setAutoCommit(false);
     try {
         // Prepare a statement to insert data into the machine table

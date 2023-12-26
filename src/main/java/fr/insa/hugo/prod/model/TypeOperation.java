@@ -21,16 +21,17 @@ public class TypeOperation {
         this.id = id;
         this.des = des;
     }
+
     public void save(Connection con) throws SQLException{
         
         try (PreparedStatement pst=con.prepareStatement(
                 "INSERT INTO machine (des) VALUES (?)")){
             
             pst.setString(1, this.des);
-           
             pst.executeUpdate();
         }
     }
+
     public int getId() {
         return id;
     }

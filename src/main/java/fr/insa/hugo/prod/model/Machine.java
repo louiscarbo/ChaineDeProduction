@@ -39,8 +39,5 @@ public class Machine {
             pst.setDouble(3, this.puissance);
             pst.executeUpdate();
         }
-    }
-    
-
-    
+    }    
 }

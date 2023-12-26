@@ -80,12 +80,6 @@ public class GestionBDD {
                 "ae2fe50b");
     }
 
-    /**
-     * Creation du schéma. On veut créer tout ou rien, d'où la gestion explicite
-     * des transactions.
-     *
-     * @throws SQLException
-     */
     public void creeSchema() throws SQLException {
         this.conn.setAutoCommit(false);
         try (Statement st = this.conn.createStatement()) {
@@ -99,15 +93,15 @@ public class GestionBDD {
             );
              st.executeUpdate(
                     "create table realise (\n"
-                    + "    idMachine integer not null,\n"
-                    + "    idType integer not null unique,\n"
+                    + "    idMachine integer null,\n"
+                    + "    idType integer null unique,\n"
                     + "    duree integer not null\n"        
                     + ")\n"
             );
             st.executeUpdate(
                     "create table typeoperation (\n"
                     + "    id integer not null primary key AUTO_INCREMENT,\n"
-                    + "    des integer not null\n"
+                    + "    des varchar(100) not null\n"
                     + ")\n"
             );
              st.executeUpdate(
@@ -126,20 +120,24 @@ public class GestionBDD {
             );
             this.conn.commit();
             st.executeUpdate(
+                "CREATE INDEX fk_machine_id ON realise (idMachine)"
+            );
+            st.executeUpdate(
                     "alter table machine \n"
                     + "    add constraint fk_machine_id \n"
                     + "    foreign key (id) references realise(idMachine) \n"
             );
             st.executeUpdate(
-                    "alter table Typeoperation \n"
-                    + "    add constraint fk_typeoperation_id \n"
-                    + "    foreign key (id) references realise(idType) \n"
-            );
-             st.executeUpdate(
                     "alter table produit \n"
                     + "    add constraint fk_produit_id \n"
                     + "    foreign key (id) references realise(id) \n"
             );
+            st.executeUpdate(
+                    "alter table typeoperation \n"
+                    + "    add constraint fk_typeoperation_id \n"
+                    + "    foreign key (id) references realise(idType) \n"
+            );
+            this.conn.commit();
         } catch (SQLException ex) {
             this.conn.rollback();
             throw ex;
@@ -148,13 +146,6 @@ public class GestionBDD {
         }
     }
 
-    /**
-     * Suppression du schéma. Le schéma n'est peut-être pas créé, ou pas
-     * entièrement créé, on ne s'arrête donc pas en cas d'erreur : on ne fait
-     * que passer à la suite
-     *
-     * @throws SQLException
-     */
     public void deleteSchema() throws SQLException {
         try (Statement st = this.conn.createStatement()) {
             // pour être sûr de pouvoir supprimer, il faut d'abord supprimer les liens
@@ -193,84 +184,45 @@ public class GestionBDD {
         }
     }
 
-    public void initTest() throws SQLException {
+    public void initTest(){
         TypeOperation t1= new TypeOperation(1, "fraisage");
-        t1.save(conn);
-        Machine m1 =new Machine(1, "rapide","F01", 20);
-        m1.save(conn);
-        this.conn.setAutoCommit(true);
+        try {
+            t1.save(this.conn);
+        } catch (SQLException exc) {
+            System.out.println("ERREUR t1.save " + exc.getLocalizedMessage());
+        }
 
+        try {
+            Machine m1 =new Machine(1, "rapide","F01", 20.0);
+            m1.save(this.conn);
+        } catch(SQLException exc) {
+            System.out.println("ERREUR m1.save " + exc.getLocalizedMessage());
+        }
    }  
     
-
-    public void razBDD() throws SQLException {
-        this.deleteSchema();
-        this.creeSchema();
+    public void razBDD() {
+        try {
+            this.deleteSchema();
+        } catch(SQLException exc) {
+            System.out.println("ERREUR deleteSchema " + exc.getLocalizedMessage());
+        }
+        try {
+            this.creeSchema();
+        } catch(SQLException exc) {
+            System.out.println("ERREUR creeSchema " + exc.getLocalizedMessage());
+        }
+        try {
+            Machine.fillMachineTable(this.conn);
+        } catch(SQLException exc) {
+            System.out.println("ERREUR fillMachineTable " + exc.getLocalizedMessage());
+        }
         this.initTest();
     }
 
-    public void menuUtilisateur() {
-        int rep = -1;
-        while (rep != 0) {
-            int i = 1;
-            System.out.println("Menu utilisateur");
-            System.out.println("================");
-            System.out.println((i++) + ") lister les utilisateurs");
-            System.out.println((i++) + ") ajouter un utilisateur");
-            System.out.println("0) Fin");
-            rep = ConsoleFdB.entreeEntier("Votre choix : ");
-            try {
-                int j = 1;
-                if (rep == j++) {
-                    List<Utilisateur> users = Utilisateur.tousLesUtilisateurs(this.conn);
-                    System.out.println(users.size() + " utilisateurs : ");
-                    System.out.println(ListUtils.enumerateList(users));
-                } else if (rep == j++) {
-                    System.out.println("entrez un nouvel utilisateur : ");
-                    Utilisateur nouveau = Utilisateur.demande();
-                    nouveau.saveInDBV1(this.conn);
-                }
-            } catch (SQLException ex) {
-                System.out.println(ExceptionsUtils.messageEtPremiersAppelsDansPackage(ex, "fr.insa.beuvron", 5));
-            }
-        }
-    }
-
-    public void menuPrincipal() {
-        int rep = -1;
-        while (rep != 0) {
-            int i = 1;
-            System.out.println("Menu principal");
-            System.out.println("==============");
-            System.out.println((i++) + ") supprimer schéma");
-            System.out.println((i++) + ") créer schéma");
-            System.out.println((i++) + ") RAZ BDD = supp + crée + init");
-            System.out.println((i++) + ") gestion des utilisateurs");
-            System.out.println("0) Fin");
-            rep = ConsoleFdB.entreeEntier("Votre choix : ");
-            try {
-                int j = 1;
-                if (rep == j++) {
-                    this.deleteSchema();
-                } else if (rep == j++) {
-                    this.creeSchema();
-                } else if (rep == j++) {
-                    this.razBDD();
-                } else if (rep == j++) {
-                    this.menuUtilisateur();
-                }
-            } catch (SQLException ex) {
-                System.out.println(ExceptionsUtils.messageEtPremiersAppelsDansPackage(ex, "fr.insa.beuvron", 5));
-            }
-        }
-    }
-
-    
     public static void debut() {
         try (Connection con = connectSurServeurM3()) {
             System.out.println("connecté");
             GestionBDD gestionnaire = new GestionBDD(con);
-            gestionnaire.menuPrincipal();
         } catch (SQLException ex) {
             throw new Error("Connection impossible", ex);
         }

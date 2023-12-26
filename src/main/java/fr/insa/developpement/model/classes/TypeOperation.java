@@ -12,13 +12,12 @@ public class TypeOperation {
         this.id = id;
         this.des = des;
     }
+
     public void save(Connection con) throws SQLException{
-        
         try (PreparedStatement pst=con.prepareStatement(
-                "INSERT INTO machine (id,des) VALUES (?,?)")){
-            
+                "INSERT INTO typeoperation (id,des) VALUES (?,?)")){
             pst.setInt(1, this.id);
-           pst.setString(2 ,this.des);
+            pst.setString(2 ,this.des);
             pst.executeUpdate();
         }
     }

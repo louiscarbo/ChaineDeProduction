@@ -1,5 +1,8 @@
 package fr.insa.developpement.views.main;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -13,6 +16,9 @@ import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+
+import fr.insa.developpement.model.GestionBDD;
+
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.charts.model.Dial;
@@ -78,11 +84,21 @@ public class MainLayout extends AppLayout {
     }
 
     private Dialog createResetDialog() {
-        Button cancelButton = new Button("Annuler");
-        Button confirmationButton = new Button("Oui, réinitialiser");
-        confirmationButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-
         Dialog resetDialog = new Dialog();
+
+        Button cancelButton = new Button("Annuler", event -> resetDialog.close());
+        Button confirmationButton = new Button("Oui, réinitialiser");
+        confirmationButton.addSingleClickListener(event -> {
+            resetDialog.close();
+            try (Connection connection = GestionBDD.connectSurServeurM3()) {
+                GestionBDD gestionBDD = new GestionBDD(connection);
+                gestionBDD.razBDD();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        });
+        confirmationButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
 
         resetDialog.setHeaderTitle("Êtes vous sûr ?");
         resetDialog.add(new Text("Vous êtes sur le point de réinitialiser toute la base de données. Êtes vous sûr ?"));
