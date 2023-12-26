@@ -1,9 +1,6 @@
 package fr.insa.developpement.views.operations;
 
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;

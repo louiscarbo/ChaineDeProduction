@@ -1,5 +1,6 @@
 package fr.insa.developpement.views.main;
 
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.html.Footer;
@@ -12,6 +13,10 @@ import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.charts.model.Dial;
+import com.vaadin.flow.component.dialog.Dialog;
 
 @PageTitle("Main")
 @Route(value = "")
@@ -47,7 +52,6 @@ public class MainLayout extends AppLayout {
 
     private SideNav createNavigation() {
         SideNav nav = new SideNav();
-
         nav.addItem(new SideNavItem("Machines", "machines"));
         nav.addItem(new SideNavItem("Opérations", "operations"));
         nav.addItem(new SideNavItem("Produits", "produits"));
@@ -57,8 +61,35 @@ public class MainLayout extends AppLayout {
 
     private Footer createFooter() {
         Footer layout = new Footer();
+        layout.add(createResetButton());
 
         return layout;
+    }
+
+    private Button createResetButton() {
+
+        Button resetButton = new Button("Réinitialiser");
+        resetButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+        resetButton.addSingleClickListener(clickEvent -> {
+            createResetDialog().open();
+        });
+
+        return resetButton;
+    }
+
+    private Dialog createResetDialog() {
+        Button cancelButton = new Button("Annuler");
+        Button confirmationButton = new Button("Oui, réinitialiser");
+        confirmationButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+
+        Dialog resetDialog = new Dialog();
+
+        resetDialog.setHeaderTitle("Êtes vous sûr ?");
+        resetDialog.add(new Text("Vous êtes sur le point de réinitialiser toute la base de données. Êtes vous sûr ?"));
+        resetDialog.getFooter().add(cancelButton);
+        resetDialog.getFooter().add(confirmationButton);
+
+        return resetDialog;
     }
 
     @Override
