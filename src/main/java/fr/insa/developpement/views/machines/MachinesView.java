@@ -38,9 +38,15 @@ public class MachinesView extends Div {
         setSizeFull();
         addClassNames("machines-view");
 
-        HorizontalLayout hlayout = new HorizontalLayout(createAddMachineButton(), createRefreshGridButton());
+        HorizontalLayout hlayout = new HorizontalLayout(
+            createAddMachineButton(),
+            createRefreshGridButton()
+        );
 
-        VerticalLayout layout = new VerticalLayout(hlayout, createGrid());
+        VerticalLayout layout = new VerticalLayout(
+            hlayout,
+            createGrid()
+        );
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setSpacing(false);

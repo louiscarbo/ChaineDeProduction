@@ -1,7 +1,6 @@
 package fr.insa.developpement.views.operations;
 
 import fr.insa.developpement.model.GestionBDD;
-import fr.insa.developpement.model.classes.Machine;
 import fr.insa.developpement.model.classes.TypeOperation;
 import fr.insa.developpement.views.main.MainLayout;
 import java.sql.SQLException;

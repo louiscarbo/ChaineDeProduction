@@ -1,7 +1,11 @@
 package fr.insa.developpement.views.produits;
 
+import fr.insa.developpement.model.GestionBDD;
 import fr.insa.developpement.model.classes.Produit;
 import fr.insa.developpement.views.main.MainLayout;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -12,7 +16,10 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -23,31 +30,81 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 public class ProduitsView extends Div {
 
     private Grid<Produit> grid;
+    private List<Produit> produits = new ArrayList<>();
 
     public ProduitsView() {
         setSizeFull();
         addClassNames("produits-view");
 
-        VerticalLayout layout = new VerticalLayout(createButton(), createGrid());
+        HorizontalLayout hlayout = new HorizontalLayout(
+            createAddProduitButton(),
+            createRefreshGridButton()
+        );
+
+        VerticalLayout layout = new VerticalLayout(
+            hlayout,
+            createGrid()
+        );
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setSpacing(false);
+
         add(layout);
     }
 
     private Component createGrid() {
         grid = new Grid<>(Produit.class, false);
-        grid.addColumn("nom").setAutoWidth(true);
-        grid.addColumn("description").setAutoWidth(true);
+        grid.addColumn("ref").setAutoWidth(true).setHeader("Référence");
+        grid.addColumn("des").setAutoWidth(true).setHeader("Description");
+        grid.addColumn(
+            new ComponentRenderer<>(Button::new, (button, produit) -> {
+                button.addThemeVariants(ButtonVariant.LUMO_ICON,
+                    ButtonVariant.LUMO_ERROR,
+                    ButtonVariant.LUMO_TERTIARY);
+                button.addClickListener(e -> {
+                    Dialog deleteProduitDialog = deleteProduitDialog(produit);
+                    deleteProduitDialog.open();
+                });
+                button.setIcon(new Icon(VaadinIcon.TRASH));
+            })
+        ).setHeader("Supprimer");
 
-        grid.setItems();
+        refreshProduits();
+        grid.setItems(produits);
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 
         return grid;
     }
 
-    private Component createButton() {
+    private Dialog deleteProduitDialog(Produit produit) {
+        Dialog dialog = new Dialog("Êtes vous sûr ?");
+        dialog.add("Vous êtes sur le point de supprimer un produit. En êtes vous sûr ?");
+
+        Button confirmationButton = new Button(
+            "Oui, supprimer",
+            e -> {
+                try {
+                    produit.delete(GestionBDD.connectSurServeurM3());
+                    dialog.close();
+                    Notification.show("Machine supprimée avec succès.");
+                    this.refreshGrid();
+                } catch (SQLException e1) {
+                    Notification.show(
+                        "Une erreur est survenue lors de la suppresion de la machine : \n" + e1.getLocalizedMessage()
+                    );
+                }
+            }
+        );
+        confirmationButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+
+        dialog.getFooter().add(new Button("Annuler", e-> dialog.close()));
+        dialog.getFooter().add(confirmationButton);
+
+        return dialog;
+    }
+
+    private Component createAddProduitButton() {
         Dialog dialog = new NewProduitDialog();
 
         Button button = new Button(
@@ -60,6 +117,36 @@ public class ProduitsView extends Div {
         button.getStyle().set("margin-left", "10px");
                 
         return button;
+    }
+
+    private Component createRefreshGridButton() {
+        Button button = new Button(
+            "Actualiser la liste",
+            new Icon(VaadinIcon.REFRESH),
+            e -> refreshGrid()
+        );
+        
+        button.getStyle().set("margin-left", "10px");
+
+        return button;
+    }
+
+    private void refreshProduits() {
+        try {
+            this.produits = Produit.getProduitsFromServer();
+        } catch(SQLException exception) {
+            Notification.show("Erreur lors de la récupération des produits depuis le serveur : " + exception.getLocalizedMessage());
+        }
+    }
+
+    private void refreshGrid() {
+        try {
+            this.produits = Produit.getProduitsFromServer();
+            grid.setItems(produits);
+            Notification.show("Liste des produits mise à jour avec succès.");
+        } catch(SQLException exception) {
+            Notification.show("Erreur lors de la mise à jour de la liste des produits : " + exception.getLocalizedMessage());
+        }
     }
 
 }
