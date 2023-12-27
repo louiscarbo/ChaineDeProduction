@@ -118,7 +118,6 @@ public class GestionBDD {
                     + "    idproduit integer not null unique,\n"  
                     + ")\n"
             );
-            this.conn.commit();
             st.executeUpdate(
                 "CREATE INDEX fk_machine_id ON realise (idMachine)"
             );
@@ -126,11 +125,6 @@ public class GestionBDD {
                     "alter table machine \n"
                     + "    add constraint fk_machine_id \n"
                     + "    foreign key (id) references realise(idMachine) \n"
-            );
-            st.executeUpdate(
-                    "alter table produit \n"
-                    + "    add constraint fk_produit_id \n"
-                    + "    foreign key (id) references realise(id) \n"
             );
             st.executeUpdate(
                     "alter table typeoperation \n"
