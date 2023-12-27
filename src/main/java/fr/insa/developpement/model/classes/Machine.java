@@ -45,6 +45,15 @@ public class Machine {
             pst.executeUpdate();
         }
     }
+
+    public void delete(Connection con) throws SQLException {
+        try (PreparedStatement pst = con.prepareStatement(
+            "DELETE FROM machine WHERE id = ?"
+        )) {
+            pst.setInt(1, this.id);
+            pst.executeUpdate();
+        }
+    }
     
     public static void fillMachineTable(Connection con) throws SQLException {
         con.setAutoCommit(false);

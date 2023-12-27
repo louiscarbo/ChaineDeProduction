@@ -1,5 +1,6 @@
 package fr.insa.developpement.views.machines;
 
+import fr.insa.developpement.model.GestionBDD;
 import fr.insa.developpement.model.classes.Machine;
 import fr.insa.developpement.views.main.MainLayout;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -19,6 +20,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -50,6 +52,18 @@ public class MachinesView extends Div {
         grid.addColumn("ref").setAutoWidth(true).setHeader("Référence");
         grid.addColumn("des").setAutoWidth(true).setHeader("Description");
         grid.addColumn("puissance").setAutoWidth(true);
+        grid.addColumn(
+            new ComponentRenderer<>(Button::new, (button, machine) -> {
+                button.addThemeVariants(ButtonVariant.LUMO_ICON,
+                    ButtonVariant.LUMO_ERROR,
+                    ButtonVariant.LUMO_TERTIARY);
+                button.addClickListener(e -> {
+                    Dialog deleteMachineDialog = deleteMachineDialog(machine);
+                    deleteMachineDialog.open();
+                });
+                button.setIcon(new Icon(VaadinIcon.TRASH));
+            })
+        ).setHeader("Supprimer");
 
         refreshMachines();
         grid.setItems(machines);
@@ -57,6 +71,33 @@ public class MachinesView extends Div {
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 
         return grid;
+    }
+
+    private Dialog deleteMachineDialog(Machine machine) {
+        Dialog dialog = new Dialog("Êtes vous sûr ?");
+        dialog.add("Vous êtes sur le point de supprimer une machine. En êtes vous sûr ?");
+
+        Button confirmationButton = new Button(
+            "Oui, supprimer",
+            e -> {
+                try {
+                    machine.delete(GestionBDD.connectSurServeurM3());
+                    dialog.close();
+                    Notification.show("Machine supprimée avec succès.");
+                    this.refreshGrid();
+                } catch (SQLException e1) {
+                    Notification.show(
+                        "Une erreur est survenue lors de la suppresion de la machine : \n" + e1.getLocalizedMessage()
+                    );
+                }
+            }
+        );
+        confirmationButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+
+        dialog.getFooter().add(new Button("Annuler", e-> dialog.close()));
+        dialog.getFooter().add(confirmationButton);
+
+        return dialog;
     }
 
     private Component createAddMachineButton() {
