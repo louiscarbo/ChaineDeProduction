@@ -17,6 +17,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -34,7 +35,9 @@ public class MachinesView extends Div {
         setSizeFull();
         addClassNames("machines-view");
 
-        VerticalLayout layout = new VerticalLayout(createButton(), createGrid());
+        HorizontalLayout hlayout = new HorizontalLayout(createAddMachineButton(), createRefreshGridButton());
+
+        VerticalLayout layout = new VerticalLayout(hlayout, createGrid());
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setSpacing(false);
@@ -56,7 +59,7 @@ public class MachinesView extends Div {
         return grid;
     }
 
-    private Component createButton() {
+    private Component createAddMachineButton() {
         Dialog dialog = new NewMachineDialog();
 
         Button button = new Button(
@@ -71,12 +74,35 @@ public class MachinesView extends Div {
         return button;
     }
 
+    private Component createRefreshGridButton() {
+        Button button = new Button(
+            "Actualiser la liste",
+            new Icon(VaadinIcon.REFRESH),
+            e -> refreshGrid()
+        );
+        
+        button.getStyle().set("margin-left", "10px");
+
+        return button;
+    }
+
     private void refreshMachines() {
         try {
             this.machines = Machine.getMachinesFromServer();
-            Notification.show("Machines récupérées depuis le serveur avec succès.");
         } catch(SQLException exception) {
             Notification.show("Erreur lors de la récupération des machines depuis le serveur : " + exception.getLocalizedMessage());
+        }
+    }
+
+    private void refreshGrid() {
+        this.refreshMachines();
+
+        try {
+            this.machines = Machine.getMachinesFromServer();
+            grid.setItems(machines);
+            Notification.show("Liste des machines mise à jour avec succès.");
+        } catch(SQLException exception) {
+            Notification.show("Erreur lors de la mise à jour de la liste des machines : " + exception.getLocalizedMessage());
         }
     }
 
