@@ -47,8 +47,8 @@ public class MachinesView extends Div {
 
     private Component createGrid() {
         grid = new Grid<>(Machine.class, false);
-        grid.addColumn("ref").setAutoWidth(true);
-        grid.addColumn("des").setAutoWidth(true);
+        grid.addColumn("ref").setAutoWidth(true).setHeader("Référence");
+        grid.addColumn("des").setAutoWidth(true).setHeader("Description");
         grid.addColumn("puissance").setAutoWidth(true);
 
         refreshMachines();
