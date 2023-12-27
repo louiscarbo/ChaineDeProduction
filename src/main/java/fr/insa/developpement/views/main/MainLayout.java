@@ -10,6 +10,7 @@ import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.sidenav.SideNav;
@@ -57,12 +58,14 @@ public class MainLayout extends AppLayout {
     }
 
     private SideNav createNavigation() {
-        SideNav nav = new SideNav();
-        nav.addItem(new SideNavItem("Machines", "machines"));
-        nav.addItem(new SideNavItem("Opérations", "operations"));
-        nav.addItem(new SideNavItem("Produits", "produits"));
+        SideNav modeleSideNav = new SideNav();
+        modeleSideNav.setLabel("Modèle");
+        modeleSideNav.setCollapsible(true);
+        modeleSideNav.addItem(new SideNavItem("Machines", "machines", VaadinIcon.FACTORY.create()));
+        modeleSideNav.addItem(new SideNavItem("Types d'Opérations", "type-operations", VaadinIcon.COGS.create()));
+        modeleSideNav.addItem(new SideNavItem("Produits", "produits", VaadinIcon.PACKAGE.create()));
 
-        return nav;
+        return modeleSideNav;
     }
 
     private Footer createFooter() {

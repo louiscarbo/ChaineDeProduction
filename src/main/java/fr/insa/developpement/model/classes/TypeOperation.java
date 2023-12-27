@@ -20,6 +20,10 @@ public class TypeOperation {
         this.nom = nom;
     }
 
+    public TypeOperation(String nom, String des) {
+        this(0, nom, des);
+    }
+
     public TypeOperation() {
         this.id = 0;
         this.des = "";

@@ -11,14 +11,21 @@ import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.value.ValueChangeMode;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.insa.developpement.model.GestionBDD;
 import fr.insa.developpement.model.classes.Machine;
+import fr.insa.developpement.model.classes.TypeOperation;
 
 public class NewOperationTypeDialog extends Dialog {
+
+    private TextField nomTextField;
+    private TextField desTextField;
+    private Button saveButton;
     
     public NewOperationTypeDialog() {
         this.setHeaderTitle("Nouveau Type d'Opération");
@@ -26,20 +33,39 @@ public class NewOperationTypeDialog extends Dialog {
         VerticalLayout dialogLayout = createDialogLayout();
         this.add(dialogLayout);
 
-        Button saveButton = createSaveButton(this);
+        this.saveButton = createSaveButton(this);
+        this.saveButton.setEnabled(false);
+        
         Button cancelButton = new Button("Annuler", e -> this.close());
         this.getFooter().add(cancelButton);
         this.getFooter().add(saveButton);
+        enableOrDisableSaveButton();
     }
 
-    private static VerticalLayout createDialogLayout() {
-        TextField firstNameField = new TextField("Nom");
-        TextField lastNameField = new TextField("Description");
+    private void enableOrDisableSaveButton() {
+        // Permet d'écouter les changements de valeur dans les champs pour activer/désactiver le bouton de validation
+        this.nomTextField.setValueChangeMode(ValueChangeMode.EAGER);
+        this.nomTextField.addValueChangeListener(e -> {
+            boolean allFieldsFilled = !nomTextField.isEmpty() && !desTextField.isEmpty();
+            saveButton.setEnabled(allFieldsFilled);
+        });
+        this.desTextField.setValueChangeMode(ValueChangeMode.EAGER);
+        this.desTextField.addValueChangeListener(e -> {
+            boolean allFieldsFilled = !nomTextField.isEmpty() && !desTextField.isEmpty();
+            saveButton.setEnabled(allFieldsFilled);
+        });
+    }
+
+    private VerticalLayout createDialogLayout() {
+        this.nomTextField = new TextField("Nom");
+        this.desTextField = new TextField("Description");
+        
+        // Ne fait rien pour l'instant
         Component listeMachines = createMachinesList();
 
         VerticalLayout dialogLayout = new VerticalLayout(
-            firstNameField,
-            lastNameField,
+            nomTextField,
+            desTextField,
             listeMachines
         );
         dialogLayout.setPadding(false);
@@ -50,13 +76,42 @@ public class NewOperationTypeDialog extends Dialog {
         return dialogLayout;
     }
 
-    private static Button createSaveButton(Dialog dialog) {
-        Button saveButton = new Button("Ajouter", e -> dialog.close());
+    private Button createSaveButton(Dialog dialog) {
+        Button saveButton = new Button(
+            "Ajouter",
+            e -> {
+                TypeOperation newTypeOperation = createTypeOperation();
+                try {
+                    newTypeOperation.save(GestionBDD.connectSurServeurM3());
+                    Notification.show("Type d'opération ajouté avec succès");
+                } catch (SQLException e1) {
+                    Notification.show(
+                        "Une erreur est survenue lors de l'enregistrement du type d'opération sur le serveur :\n" + e1.getLocalizedMessage()
+                    );
+                } finally {
+                    setFormValuesToNull();
+                }
+                dialog.close();
+            }
+        );
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
         return saveButton;
     }
 
+    private void setFormValuesToNull() {
+        this.nomTextField.setValue("");
+        this.desTextField.setValue("");
+    }
+
+    private TypeOperation createTypeOperation() {
+        String nom = this.nomTextField.getValue();
+        String des = this.desTextField.getValue();
+    
+        return new TypeOperation(nom, des);
+    }
+
+    // TODO Rendre le lien entre les machines et les types d'opération actif
     private static CheckboxGroup<Machine> createMachinesList() {
         CheckboxGroup<Machine> listeMachines = new CheckboxGroup<>();
         List<Machine> machines = new ArrayList<Machine>();

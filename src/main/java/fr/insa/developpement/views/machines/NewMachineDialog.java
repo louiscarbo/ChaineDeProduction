@@ -31,6 +31,7 @@ public class NewMachineDialog extends Dialog {
 
         this.saveButton = createSaveButton(this);
         this.saveButton.setEnabled(false);
+        
         Button cancelButton = new Button("Annuler", e -> this.close());
         this.getFooter().add(cancelButton);
         this.getFooter().add(saveButton);

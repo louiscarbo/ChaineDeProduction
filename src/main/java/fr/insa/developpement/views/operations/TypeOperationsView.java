@@ -25,16 +25,16 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
-@PageTitle("Opérations")
-@Route(value = "operations", layout = MainLayout.class)
+@PageTitle("Types d'Opérations")
+@Route(value = "type-operations", layout = MainLayout.class)
 @Uses(Icon.class)
 
-public class OperationsView extends Div {
+public class TypeOperationsView extends Div {
 
     private Grid<TypeOperation> grid;
     private List<TypeOperation> typeOperations = new ArrayList<>();
 
-    public OperationsView() {
+    public TypeOperationsView() {
         setSizeFull();
         addClassNames("operations-view");
 
