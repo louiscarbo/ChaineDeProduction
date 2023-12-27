@@ -3,14 +3,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-
 public class TypeOperation {
     private int id;
     private String des;
+    private String nom;
 
-    public TypeOperation(int id, String des) {
+    public TypeOperation(int id, String nom, String des) {
         this.id = id;
         this.des = des;
+        this.nom = nom;
+    }
+
+    public TypeOperation() {
+        this.id = 0;
+        this.des = "";
+        this.nom = "";
     }
 
     public void save(Connection con) throws SQLException{
@@ -21,6 +28,16 @@ public class TypeOperation {
             pst.executeUpdate();
         }
     }
+
+    public void delete(Connection con) throws SQLException {
+        try (PreparedStatement pst = con.prepareStatement(
+            "DELETE FROM typeoperation WHERE id = ?"
+        )) {
+            pst.setInt(1, this.id);
+            pst.executeUpdate();
+        }
+    }
+
     public int getId() {
         return id;
     }
@@ -29,12 +46,20 @@ public class TypeOperation {
         this.id = id;
     }
 
-    public String getdes() {
+    public String getDes() {
         return des;
     }
 
-    public void setdes(String des) {
+    public void setDes(String des) {
         this.des = des;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
     @Override
@@ -44,7 +69,5 @@ public class TypeOperation {
                 ", des='" + des + '\'' +
                 '}';
     }
-
-    
 
 }

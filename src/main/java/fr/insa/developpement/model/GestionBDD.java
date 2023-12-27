@@ -73,6 +73,7 @@ public class GestionBDD {
             st.executeUpdate(
                     "create table typeoperation (\n"
                     + "    id integer not null primary key AUTO_INCREMENT,\n"
+                    + "    nom varchar(100) not null\n"
                     + "    des varchar(100) not null\n"
                     + ")\n"
             );
@@ -151,7 +152,7 @@ public class GestionBDD {
     }
 
     public void initTest(){
-        TypeOperation t1= new TypeOperation(1, "fraisage");
+        TypeOperation t1= new TypeOperation(1, "Fraisage", "");
         try {
             t1.save(this.conn);
         } catch (SQLException exc) {
