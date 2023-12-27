@@ -28,9 +28,10 @@ public class TypeOperation {
 
     public void save(Connection con) throws SQLException{
         try (PreparedStatement pst=con.prepareStatement(
-                "INSERT INTO typeoperation (id,des) VALUES (?,?)")){
+                "INSERT INTO typeoperation (id,nom,des) VALUES (?,?,?)")){
             pst.setInt(1, this.id);
-            pst.setString(2 ,this.des);
+            pst.setString(2, this.nom);
+            pst.setString(3 ,this.des);
             pst.executeUpdate();
         }
     }

@@ -94,16 +94,16 @@ public class GestionBDD {
             st.executeUpdate(
                 "CREATE INDEX fk_machine_id ON realise (idMachine)"
             );
-            st.executeUpdate(
-                    "alter table machine \n"
-                    + "    add constraint fk_machine_id \n"
-                    + "    foreign key (id) references realise(idMachine) \n"
-            );
-            st.executeUpdate(
-                    "alter table typeoperation \n"
-                    + "    add constraint fk_typeoperation_id \n"
-                    + "    foreign key (id) references realise(idType) \n"
-            );
+            // st.executeUpdate(
+            //         "alter table machine \n"
+            //         + "    add constraint fk_machine_id \n"
+            //         + "    foreign key (id) references realise(idMachine) \n"
+            // );
+            // st.executeUpdate(
+            //         "alter table typeoperation \n"
+            //         + "    add constraint fk_typeoperation_id \n"
+            //         + "    foreign key (id) references realise(idType) \n"
+            // );
             this.conn.commit();
         } catch (SQLException ex) {
             this.conn.rollback();
@@ -152,8 +152,8 @@ public class GestionBDD {
     }
 
     public void initTest(){
-        TypeOperation t1= new TypeOperation(1, "Fraisage", "");
         try {
+            TypeOperation t1= new TypeOperation(1, "Fraisage", "");
             t1.save(this.conn);
         } catch (SQLException exc) {
             System.out.println("ERREUR t1.save " + exc.getLocalizedMessage());
