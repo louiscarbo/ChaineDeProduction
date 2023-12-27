@@ -2,6 +2,7 @@ package fr.insa.developpement.views.produits;
 
 import java.sql.SQLException;
 
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -88,6 +89,7 @@ public class NewProduitDialog extends Dialog {
             }
         );
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        saveButton.addClickShortcut(Key.ENTER);
 
         return saveButton;
     }

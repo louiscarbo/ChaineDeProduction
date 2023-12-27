@@ -3,6 +3,7 @@ package fr.insa.developpement.views.main;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -91,6 +92,7 @@ public class MainLayout extends AppLayout {
         Dialog resetDialog = new Dialog();
 
         Button cancelButton = new Button("Annuler", event -> resetDialog.close());
+
         Button confirmationButton = new Button("Oui, réinitialiser");
         confirmationButton.addSingleClickListener(event -> {
             resetDialog.close();
@@ -102,6 +104,7 @@ public class MainLayout extends AppLayout {
             }
         });
         confirmationButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+        confirmationButton.addClickShortcut(Key.ENTER);
 
         resetDialog.setHeaderTitle("Êtes vous sûr ?");
         resetDialog.add(new Text("Vous êtes sur le point de réinitialiser toute la base de données. Êtes vous sûr ?"));

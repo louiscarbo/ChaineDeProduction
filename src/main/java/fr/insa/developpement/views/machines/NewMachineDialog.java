@@ -6,6 +6,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 import java.sql.SQLException;
 
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.ShortcutEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -98,6 +100,7 @@ public class NewMachineDialog extends Dialog {
             }
         );
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        saveButton.addClickShortcut(Key.ENTER);
 
         return saveButton;
     }
