@@ -1,6 +1,7 @@
 package fr.insa.developpement.views.operations;
 
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
@@ -57,15 +58,15 @@ public class NewOperationTypeDialog extends Dialog {
     }
 
     private static CheckboxGroup<Machine> createMachinesList() {
+        CheckboxGroup<Machine> listeMachines = new CheckboxGroup<>();
         List<Machine> machines = new ArrayList<Machine>();
         try {
             machines = Machine.getMachinesFromServer();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            listeMachines.setEnabled(false);
+            Notification.show("Erreur lors de la récupération des machines à sélectionner. " + e.getLocalizedMessage());
         }
 
-        CheckboxGroup<Machine> listeMachines = new CheckboxGroup<>();
         listeMachines.setItems(machines);
         listeMachines.setLabel("Machines réalisant l'opération");
         listeMachines.setRenderer(new ComponentRenderer<>(machine -> new Text(machine.getRef())));

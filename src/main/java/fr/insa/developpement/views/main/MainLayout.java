@@ -10,6 +10,7 @@ import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
@@ -94,8 +95,7 @@ public class MainLayout extends AppLayout {
                 GestionBDD gestionBDD = new GestionBDD(connection);
                 gestionBDD.razBDD();
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Notification.show("Une erreur est survenue lors de la réinitialisation de la base de données : " + e.getLocalizedMessage());
             }
         });
         confirmationButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);

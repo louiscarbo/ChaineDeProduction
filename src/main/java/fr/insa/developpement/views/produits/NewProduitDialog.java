@@ -24,8 +24,6 @@ public class NewProduitDialog extends Dialog {
 
         TextField firstNameField = new TextField("Nom");
         TextField lastNameField = new TextField("Description");
-        //TODO Ajouter un picker pour le type d'opération
-        //TODO Ajouter un truc pour la durée de réalisation du type d'opération
 
         VerticalLayout dialogLayout = new VerticalLayout(firstNameField, lastNameField);
         dialogLayout.setPadding(false);
