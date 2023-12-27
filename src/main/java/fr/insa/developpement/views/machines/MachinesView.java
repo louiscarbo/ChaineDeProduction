@@ -3,6 +3,10 @@ package fr.insa.developpement.views.machines;
 import fr.insa.developpement.model.classes.Machine;
 import fr.insa.developpement.views.main.MainLayout;
 import com.vaadin.flow.component.dialog.Dialog;
+
+import java.sql.SQLException;
+import java.util.List;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -12,6 +16,7 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -23,6 +28,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 public class MachinesView extends Div {
 
     private Grid<Machine> grid;
+    private List<Machine> machines;
 
     public MachinesView() {
         setSizeFull();
@@ -38,10 +44,12 @@ public class MachinesView extends Div {
 
     private Component createGrid() {
         grid = new Grid<>(Machine.class, false);
-        grid.addColumn("nom").setAutoWidth(true);
-        grid.addColumn("description").setAutoWidth(true);
+        grid.addColumn("ref").setAutoWidth(true);
+        grid.addColumn("des").setAutoWidth(true);
+        grid.addColumn("puissance").setAutoWidth(true);
 
-        grid.setItems();
+        refreshMachines();
+        grid.setItems(machines);
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 
@@ -61,6 +69,15 @@ public class MachinesView extends Div {
         button.getStyle().set("margin-left", "10px");
                 
         return button;
+    }
+
+    private void refreshMachines() {
+        try {
+            this.machines = Machine.getMachinesFromServer();
+            Notification.show("Machines récupérées depuis le serveur avec succès.");
+        } catch(SQLException exception) {
+            Notification.show("Erreur lors de la récupération des machines depuis le serveur : " + exception.getLocalizedMessage());
+        }
     }
 
 }

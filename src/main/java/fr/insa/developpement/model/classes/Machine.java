@@ -96,7 +96,6 @@ public class Machine {
 
                     machines.add(machine);
                 }
-
                 return machines;
             }
         }
