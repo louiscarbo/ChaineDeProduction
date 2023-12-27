@@ -37,6 +37,28 @@ public class Machine {
     }
 
     public void save(Connection con) throws SQLException{
+        con.setAutoCommit(false);
+        int nextId;
+
+        try(PreparedStatement pst = con.prepareStatement(
+                "SELECT AUTO_INCREMENT AS next_id\n" + 
+                    "FROM information_schema.TABLES\n" + 
+                    "WHERE TABLE_SCHEMA = 'm3_hgounon01'\n" +
+                    "AND TABLE_NAME = 'machine'"
+            )) {
+            ResultSet resultSet = pst.executeQuery();
+            resultSet.next();
+            nextId = resultSet.getInt("next_id");
+        }
+
+        //TODO Changer la durée
+        try(PreparedStatement pst = con.prepareStatement(
+                "INSERT INTO realise (idMachine, duree) VALUES (?,?)")) {
+            pst.setInt(1, nextId);
+            pst.setDouble(2, 30);
+            pst.executeUpdate();
+        }
+
         try (PreparedStatement pst = con.prepareStatement(
                 "INSERT INTO machine (ref, des, puissance) VALUES (?, ?, ?)")){
             pst.setString(1, this.ref);
@@ -44,6 +66,9 @@ public class Machine {
             pst.setDouble(3, this.puissance);
             pst.executeUpdate();
         }
+
+        con.commit();
+        con.setAutoCommit(true);
     }
 
     public void delete(Connection con) throws SQLException {
@@ -56,37 +81,10 @@ public class Machine {
     }
     
     public static void fillMachineTable(Connection con) throws SQLException {
-        con.setAutoCommit(false);
-        try {
-            // Prepare a statement to insert data into the machine table
-            try (PreparedStatement ps = con.prepareStatement(
-                    "INSERT INTO machine (ref, des, puissance) VALUES (?, ?, ?)")) {
-                
-                // Insert machine 1
-                ps.setString(1, "MCH001");
-                ps.setString(2, "Drill");
-                ps.setDouble(3, 1500);
-                ps.executeUpdate();
-                
-                // Insert machine 2
-                ps.setString(1, "MCH002");
-                ps.setString(2, "Lathe");
-                ps.setDouble(3, 5000);
-                ps.executeUpdate();
-                
-                // ... Repeat for as many machines as you want to insert
-                
-                // Commit the transaction
-                con.commit();
-            }
-        } catch (SQLException ex) {
-            // If there is an exception, rollback the transaction
-            con.rollback();
-            throw ex;
-        } finally {
-            // Restore default auto-commit behavior
-            con.setAutoCommit(true);
-        }
+        Machine newMachine = new Machine("MCH001", "Drill", 1500);
+        newMachine.save(con);
+        Machine newMachine2 = new Machine("MCH002", "Lathe", 5000);
+        newMachine2.save(con);
     }
 
     public static List<Machine> getMachinesFromServer() throws SQLException {
