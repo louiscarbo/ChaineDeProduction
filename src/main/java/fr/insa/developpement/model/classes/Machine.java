@@ -1,21 +1,15 @@
 package fr.insa.developpement.model.classes;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.sql.Statement;
-import java.util.HashMap;
+
+import fr.insa.developpement.model.GestionBDD;
 
 public class Machine {
-    private String nom;
-    private String description;
-    // HashMap permettant d'associer à chaque TypeOperation une durée (Double) en secondes
-    private HashMap<TypeOperation,Double> operationsDurees;
-
-//    public Machine() {
-//        this.nom = "";
-//        this.description = "";
-//        this.operationsDurees = new HashMap<TypeOperation,Double>();
-//    }
     private int id;
     private String des;
     private String ref;
@@ -35,6 +29,13 @@ public class Machine {
         this.puissance = puissance;
     }
 
+    public Machine() {
+        this.id = -1;
+        this.des = "";
+        this.ref = "";
+        this.puissance = 0;
+    }
+
     public void save(Connection con) throws SQLException{
         try (PreparedStatement pst = con.prepareStatement(
                 "INSERT INTO machine (ref, des, puissance) VALUES (?, ?, ?)")){
@@ -46,60 +47,91 @@ public class Machine {
     }
     
     public static void fillMachineTable(Connection con) throws SQLException {
-    con.setAutoCommit(false);
-    try {
-        // Prepare a statement to insert data into the machine table
-        try (PreparedStatement ps = con.prepareStatement(
-                "INSERT INTO machine (ref, des, puissance) VALUES (?, ?, ?)")) {
-            
-            // Insert machine 1
-            ps.setString(1, "MCH001");
-            ps.setString(2, "Drill");
-            ps.setDouble(3, 1500);
-            ps.executeUpdate();
-            
-            // Insert machine 2
-            ps.setString(1, "MCH002");
-            ps.setString(2, "Lathe");
-            ps.setDouble(3, 5000);
-            ps.executeUpdate();
-            
-            // ... Repeat for as many machines as you want to insert
-            
-            // Commit the transaction
-            con.commit();
+        con.setAutoCommit(false);
+        try {
+            // Prepare a statement to insert data into the machine table
+            try (PreparedStatement ps = con.prepareStatement(
+                    "INSERT INTO machine (ref, des, puissance) VALUES (?, ?, ?)")) {
+                
+                // Insert machine 1
+                ps.setString(1, "MCH001");
+                ps.setString(2, "Drill");
+                ps.setDouble(3, 1500);
+                ps.executeUpdate();
+                
+                // Insert machine 2
+                ps.setString(1, "MCH002");
+                ps.setString(2, "Lathe");
+                ps.setDouble(3, 5000);
+                ps.executeUpdate();
+                
+                // ... Repeat for as many machines as you want to insert
+                
+                // Commit the transaction
+                con.commit();
+            }
+        } catch (SQLException ex) {
+            // If there is an exception, rollback the transaction
+            con.rollback();
+            throw ex;
+        } finally {
+            // Restore default auto-commit behavior
+            con.setAutoCommit(true);
         }
-    } catch (SQLException ex) {
-        // If there is an exception, rollback the transaction
-        con.rollback();
-        throw ex;
-    } finally {
-        // Restore default auto-commit behavior
-        con.setAutoCommit(true);
-    }
-}
-    public String getNom() {
-        return nom;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
+    public static List<Machine> getMachinesFromServer() throws SQLException {
+        try (Connection conn = GestionBDD.connectSurServeurM3()) {
+            try (Statement st = conn.createStatement()) {
+                ResultSet rs = st.executeQuery("SELECT * FROM machine");
+
+                List<Machine> machines = new ArrayList<>();
+
+                while (rs.next()) {
+                    Machine machine = new Machine();
+                    machine.setId(rs.getInt("id"));
+                    machine.setDes(rs.getString("des"));
+                    machine.setRef(rs.getString("ref"));
+                    machine.setPuissance(rs.getDouble("puissance"));
+
+                    machines.add(machine);
+                }
+
+                return machines;
+            }
+        }
     }
 
-    public String getDescription() {
-        return description;
+    public int getId() {
+        return id;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public HashMap<TypeOperation, Double> getOperationsDurees() {
-        return operationsDurees;
+    public String getDes() {
+        return des;
     }
 
-    public void setOperationsDurees(HashMap<TypeOperation, Double> operationsDurees) {
-        this.operationsDurees = operationsDurees;
+    public void setDes(String des) {
+        this.des = des;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
+
+    public double getPuissance() {
+        return puissance;
+    }
+
+    public void setPuissance(double puissance) {
+        this.puissance = puissance;
     }
     
 }
