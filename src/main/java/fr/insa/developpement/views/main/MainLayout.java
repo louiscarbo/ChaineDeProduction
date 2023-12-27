@@ -21,7 +21,6 @@ import fr.insa.developpement.model.GestionBDD;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.charts.model.Dial;
 import com.vaadin.flow.component.dialog.Dialog;
 
 @PageTitle("Main")
@@ -79,6 +78,7 @@ public class MainLayout extends AppLayout {
         resetButton.addSingleClickListener(clickEvent -> {
             createResetDialog().open();
         });
+       resetButton.getStyle().set("margin-left", "10px");
 
         return resetButton;
     }

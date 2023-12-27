@@ -11,6 +11,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,11 +58,17 @@ public class NewOperationTypeDialog extends Dialog {
 
     private static CheckboxGroup<Machine> createMachinesList() {
         List<Machine> machines = new ArrayList<Machine>();
+        try {
+            machines = Machine.getMachinesFromServer();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         CheckboxGroup<Machine> listeMachines = new CheckboxGroup<>();
-        // listeMachines.setItems(machines)
+        listeMachines.setItems(machines);
         listeMachines.setLabel("Machines réalisant l'opération");
-        listeMachines.setRenderer(new ComponentRenderer<>(machine -> new Text(machine.getNom())));
+        listeMachines.setRenderer(new ComponentRenderer<>(machine -> new Text(machine.getRef())));
         listeMachines.setHeight("200px");
 
         return listeMachines;
