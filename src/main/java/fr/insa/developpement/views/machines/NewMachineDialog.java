@@ -23,7 +23,11 @@ public class NewMachineDialog extends Dialog {
     private NumberField puissanceField;
     private Button saveButton;
 
-    public NewMachineDialog() {
+    private MachinesView parentView;
+
+    public NewMachineDialog(MachinesView machinesView) {
+        this.parentView = machinesView;
+
         this.setHeaderTitle("Nouvelle Machine");
 
         VerticalLayout dialogLayout = createDialogLayout();
@@ -90,6 +94,7 @@ public class NewMachineDialog extends Dialog {
                     setFormValuesToNull();
                 }
                 dialog.close();
+                parentView.refreshGrid();
             }
         );
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);

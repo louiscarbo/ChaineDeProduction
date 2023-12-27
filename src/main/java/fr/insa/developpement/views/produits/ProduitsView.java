@@ -105,7 +105,7 @@ public class ProduitsView extends Div {
     }
 
     private Component createAddProduitButton() {
-        Dialog dialog = new NewProduitDialog();
+        Dialog dialog = new NewProduitDialog(this);
 
         Button button = new Button(
             "Ajouter un produit",
@@ -139,7 +139,7 @@ public class ProduitsView extends Div {
         }
     }
 
-    private void refreshGrid() {
+    public void refreshGrid() {
         try {
             this.produits = Produit.getProduitsFromServer();
             grid.setItems(produits);

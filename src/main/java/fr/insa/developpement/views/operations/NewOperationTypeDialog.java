@@ -26,8 +26,12 @@ public class NewOperationTypeDialog extends Dialog {
     private TextField nomTextField;
     private TextField desTextField;
     private Button saveButton;
+
+    private TypeOperationsView parentView;
     
-    public NewOperationTypeDialog() {
+    public NewOperationTypeDialog(TypeOperationsView typeOperationsView) {
+        this.parentView = typeOperationsView;
+
         this.setHeaderTitle("Nouveau Type d'Opération");
 
         VerticalLayout dialogLayout = createDialogLayout();
@@ -92,6 +96,7 @@ public class NewOperationTypeDialog extends Dialog {
                     setFormValuesToNull();
                 }
                 dialog.close();
+                parentView.refreshGrid();
             }
         );
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);

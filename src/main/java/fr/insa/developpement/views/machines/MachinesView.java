@@ -108,7 +108,7 @@ public class MachinesView extends Div {
     }
 
     private Component createAddMachineButton() {
-        Dialog dialog = new NewMachineDialog();
+        Dialog dialog = new NewMachineDialog(this);
 
         Button button = new Button(
             "Ajouter une machine",
@@ -142,7 +142,7 @@ public class MachinesView extends Div {
         }
     }
 
-    private void refreshGrid() {
+    public void refreshGrid() {
         try {
             this.machines = Machine.getMachinesFromServer();
             grid.setItems(machines);

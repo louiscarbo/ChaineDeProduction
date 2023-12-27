@@ -19,7 +19,11 @@ public class NewProduitDialog extends Dialog {
     private TextField descriptionField;
     private Button saveButton;
 
-    public NewProduitDialog() {
+    private ProduitsView parentView;
+
+    public NewProduitDialog(ProduitsView produitsView) {
+        this.parentView = produitsView;
+
         this.setHeaderTitle("Nouveau Produit");
 
         VerticalLayout dialogLayout = createDialogLayout();
@@ -80,6 +84,7 @@ public class NewProduitDialog extends Dialog {
                     setFormValuesToNull();
                 }
                 dialog.close();
+                parentView.refreshGrid();
             }
         );
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);

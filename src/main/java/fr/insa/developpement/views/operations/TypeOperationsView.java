@@ -107,7 +107,7 @@ public class TypeOperationsView extends Div {
         return dialog;
     }
 
-    private void refreshGrid() {
+    public void refreshGrid() {
         try {
             this.typeOperations = TypeOperation.getTypeOperationsFromServer();
             grid.setItems(typeOperations);
@@ -130,7 +130,7 @@ public class TypeOperationsView extends Div {
     }
 
     private Component createAddTypeOperationButton() {
-        Dialog dialog = new NewOperationTypeDialog();
+        Dialog dialog = new NewOperationTypeDialog(this);
 
         Button button = new Button(
             "Ajouter un type d'opération",
