@@ -1,7 +1,10 @@
 package fr.insa.developpement.views.operations;
 
-import fr.insa.developpement.model.classes.Operation;
+import fr.insa.developpement.model.classes.TypeOperation;
 import fr.insa.developpement.views.main.MainLayout;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -12,6 +15,7 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -23,7 +27,8 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 
 public class OperationsView extends Div {
 
-    private Grid<Operation> grid;
+    private Grid<TypeOperation> grid;
+    private List<TypeOperation> typeOperations = new ArrayList<>();
 
     public OperationsView() {
         setSizeFull();
@@ -37,16 +42,35 @@ public class OperationsView extends Div {
         add(layout);
     }
 
-    private Component createGrid() {
-        grid = new Grid<>(Operation.class, false);
-        grid.addColumn("idType").setAutoWidth(true);
-        grid.addColumn("idProduit").setAutoWidth(true);
+    public void refreshTypeOperations() {
+        try {
+            this.typeOperations = TypeOperation.getTypeOperationsFromServer();
+        } catch(SQLException exception) {
+            Notification.show("Erreur lors de la récupération des types d'opérations depuis le serveur : " + exception.getLocalizedMessage());
+        }
+    }
 
-        grid.setItems();
+    private Component createGrid() {
+        grid = new Grid<>(TypeOperation.class, false);
+        grid.addColumn("nom").setAutoWidth(true);
+        grid.addColumn("des").setAutoWidth(true);
+
+        refreshTypeOperations();
+        grid.setItems(typeOperations);
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 
         return grid;
+    }
+
+    private void refreshGrid() {
+        try {
+            this.typeOperations = TypeOperation.getTypeOperationsFromServer();
+            grid.setItems(typeOperations);
+            Notification.show("Liste des types d'opérations mise à jour avec succès.");
+        } catch(SQLException exception) {
+            Notification.show("Erreur lors de la mise à jour de la liste des machines : " + exception.getLocalizedMessage());
+        }
     }
 
     private Component createButton() {

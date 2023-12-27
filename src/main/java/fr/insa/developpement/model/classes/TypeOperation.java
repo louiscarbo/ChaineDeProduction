@@ -1,7 +1,13 @@
 package fr.insa.developpement.model.classes;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.insa.developpement.model.GestionBDD;
 
 public class TypeOperation {
     private int id;
@@ -35,6 +41,26 @@ public class TypeOperation {
         )) {
             pst.setInt(1, this.id);
             pst.executeUpdate();
+        }
+    }
+
+    public static List<TypeOperation> getTypeOperationsFromServer() throws SQLException {
+        try (Connection conn = GestionBDD.connectSurServeurM3()) {
+            try (Statement st = conn.createStatement()) {
+                ResultSet rs = st.executeQuery("SELECT * FROM typeoperation");
+
+                List<TypeOperation> typeOperations = new ArrayList<>();
+
+                while (rs.next()) {
+                    TypeOperation typeOperation = new TypeOperation();
+                    typeOperation.setId(rs.getInt("id"));
+                    typeOperation.setNom(rs.getString("nom"));
+                    typeOperation.setDes(rs.getString("des"));
+
+                    typeOperations.add(typeOperation);
+                }
+                return typeOperations;
+            }
         }
     }
 

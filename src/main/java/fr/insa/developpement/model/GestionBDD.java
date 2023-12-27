@@ -73,7 +73,7 @@ public class GestionBDD {
             st.executeUpdate(
                     "create table typeoperation (\n"
                     + "    id integer not null primary key AUTO_INCREMENT,\n"
-                    + "    nom varchar(100) not null\n"
+                    + "    nom varchar(100) not null unique,\n"
                     + "    des varchar(100) not null\n"
                     + ")\n"
             );
@@ -81,14 +81,14 @@ public class GestionBDD {
                     "create table produit (\n"
                     + "    id integer not null primary key AUTO_INCREMENT,\n"
                     + "    ref varchar(30) not null unique,\n"
-                    + "    des varchar(100) not null,\n"  
+                    + "    des varchar(100) not null\n"  
                     + ")\n"
             );
             st.executeUpdate(
                     "create table operation (\n"
                     + "    id integer not null primary key AUTO_INCREMENT,\n"
                     + "    idType integer not null unique,\n"
-                    + "    idproduit integer not null unique,\n"  
+                    + "    idproduit integer not null unique\n"  
                     + ")\n"
             );
             st.executeUpdate(

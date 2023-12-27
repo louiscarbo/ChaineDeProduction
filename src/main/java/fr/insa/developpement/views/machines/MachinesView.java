@@ -6,6 +6,7 @@ import fr.insa.developpement.views.main.MainLayout;
 import com.vaadin.flow.component.dialog.Dialog;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.vaadin.flow.component.Component;
@@ -31,7 +32,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 public class MachinesView extends Div {
 
     private Grid<Machine> grid;
-    private List<Machine> machines;
+    private List<Machine> machines = new ArrayList<>();
 
     public MachinesView() {
         setSizeFull();
@@ -136,8 +137,6 @@ public class MachinesView extends Div {
     }
 
     private void refreshGrid() {
-        this.refreshMachines();
-
         try {
             this.machines = Machine.getMachinesFromServer();
             grid.setItems(machines);
