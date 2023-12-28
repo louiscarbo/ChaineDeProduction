@@ -81,9 +81,9 @@ public class Machine {
     }
     
     public static void fillMachineTable(Connection con) throws SQLException {
-        Machine newMachine = new Machine("MCH001", "Drill", 1500);
+        Machine newMachine = new Machine("Drill", "MCH001", 1500);
         newMachine.save(con);
-        Machine newMachine2 = new Machine("MCH002", "Lathe", 5000);
+        Machine newMachine2 = new Machine("Lathe", "MCH002", 5000);
         newMachine2.save(con);
     }
 

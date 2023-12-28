@@ -153,7 +153,8 @@ public class GestionBDD {
 
     public void initTest(){
         try {
-            TypeOperation t1= new TypeOperation(1, "Fraisage", "");
+            TypeOperation t1= new TypeOperation(1, "Fraisage", "Enlèvement de matière");
+            t1.addIdMachine(1);
             t1.save(this.conn);
         } catch (SQLException exc) {
             System.out.println("ERREUR t1.save " + exc.getLocalizedMessage());
