@@ -1,12 +1,14 @@
 package fr.insa.developpement.views.operations;
 
 import fr.insa.developpement.model.GestionBDD;
+import fr.insa.developpement.model.classes.Machine;
 import fr.insa.developpement.model.classes.TypeOperation;
 import fr.insa.developpement.views.main.MainLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.Uses;
@@ -14,15 +16,21 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.TextRenderer;
+import com.vaadin.flow.function.SerializableBiConsumer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import com.vaadin.flow.theme.lumo.LumoUtility.Margin.Horizontal;
+import com.vaadin.flow.theme.lumo.LumoUtility.Margin.Vertical;
 
 @PageTitle("Types d'Opérations")
 @Route(value = "type-operations", layout = MainLayout.class)
@@ -59,6 +67,9 @@ public class TypeOperationsView extends Div {
         grid = new Grid<>(TypeOperation.class, false);
         grid.addColumn("nom").setAutoWidth(true);
         grid.addColumn("des").setAutoWidth(true).setHeader("Description");
+        grid.addColumn(new ComponentRenderer<>(typeOperation -> {
+            return getMachineNamesLayoutForGrid(typeOperation);
+        })).setHeader("Machines associées");
         grid.addColumn(
             new ComponentRenderer<>(Button::new, (button, typeOperation) -> {
                 button.addThemeVariants(ButtonVariant.LUMO_ICON,
@@ -78,6 +89,29 @@ public class TypeOperationsView extends Div {
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 
         return grid;
+    }
+
+    private static HorizontalLayout getMachineNamesLayoutForGrid(TypeOperation typeOperation) {
+        String theme = String.format("badge %s","contrast");
+        HorizontalLayout layout = new HorizontalLayout();
+
+        List<String> listeNomsMachines = new ArrayList<String>();
+        for(int id : typeOperation.getIdMachinesAssocies()) {
+            try {
+                listeNomsMachines.add(Machine.getMachineFromId(id).getRef());
+            } catch (SQLException e) {
+                Notification.show("Erreur lors de la récupération des machines associées aux types d'opération.");
+            }
+        }
+
+        for(String nomMachine: listeNomsMachines){
+            Span newSpan = new Span();
+            newSpan.getElement().setAttribute("theme", theme);
+            newSpan.setText(nomMachine);
+            layout.add(newSpan);
+        }
+
+        return layout;
     }
 
     private Dialog deleteTypeOperationDialog(TypeOperation typeOperation) {
@@ -111,9 +145,11 @@ public class TypeOperationsView extends Div {
         try {
             this.typeOperations = TypeOperation.getTypeOperationsFromServer();
             grid.setItems(typeOperations);
-            Notification.show("Liste des types d'opérations mise à jour avec succès.");
+            Notification notification = Notification.show("Liste des types d'opérations mise à jour avec succès.");
+            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         } catch(SQLException exception) {
-            Notification.show("Erreur lors de la mise à jour de la liste des machines : " + exception.getLocalizedMessage());
+            Notification notification = Notification.show("Erreur lors de la mise à jour de la liste des machines : " + exception.getLocalizedMessage());
+            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
         }
     }
 
@@ -130,12 +166,14 @@ public class TypeOperationsView extends Div {
     }
 
     private Component createAddTypeOperationButton() {
-        Dialog dialog = new NewOperationTypeDialog(this);
 
         Button button = new Button(
             "Ajouter un type d'opération",
             new Icon(VaadinIcon.PLUS),
-            e -> dialog.open()
+            e -> {
+                Dialog dialog = new NewOperationTypeDialog(this);
+                dialog.open();
+            }
         );
 
         button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);

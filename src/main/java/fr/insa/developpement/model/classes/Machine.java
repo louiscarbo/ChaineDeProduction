@@ -87,10 +87,56 @@ public class Machine {
         newMachine2.save(con);
     }
 
-    public static List<Machine> getMachinesFromServer() throws SQLException {
+    public static List<Machine> getMachines() throws SQLException {
         try (Connection conn = GestionBDD.connectSurServeurM3()) {
             try (Statement st = conn.createStatement()) {
                 ResultSet rs = st.executeQuery("SELECT * FROM machine");
+
+                List<Machine> machines = new ArrayList<>();
+
+                while (rs.next()) {
+                    Machine machine = new Machine();
+                    machine.setId(rs.getInt("id"));
+                    machine.setDes(rs.getString("des"));
+                    machine.setRef(rs.getString("ref"));
+                    machine.setPuissance(rs.getDouble("puissance"));
+
+                    machines.add(machine);
+                }
+                return machines;
+            }
+        }
+    }
+
+    // TODO pas ouf à améliorer
+    public static Machine getMachineFromId(int id) throws SQLException {
+        try (Connection conn = GestionBDD.connectSurServeurM3()) {
+            try (PreparedStatement pst = conn.prepareStatement("SELECT * FROM machine WHERE id = ?")) {
+                pst.setInt(1, id);
+                ResultSet rs = pst.executeQuery();
+
+                while (rs.next()) {
+                    Machine machine = new Machine();
+                    machine.setId(rs.getInt("id"));
+                    machine.setDes(rs.getString("des"));
+                    machine.setRef(rs.getString("ref"));
+                    machine.setPuissance(rs.getDouble("puissance"));
+                    return machine;
+                }
+            }
+        }
+        return new Machine();
+    }
+
+    public static List<Machine> getMachinesWithoutOperationType() throws SQLException {
+        try (Connection conn = GestionBDD.connectSurServeurM3()) {
+            try (Statement st = conn.createStatement()) {
+                ResultSet rs = st.executeQuery(
+                    "SELECT * FROM machine\n" +
+                        "WHERE id IN (\n" +
+                        "    SELECT idMachine FROM realise\n" +
+                        "    WHERE idType IS NULL\n" +
+                        ");");
 
                 List<Machine> machines = new ArrayList<>();
 

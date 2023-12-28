@@ -65,8 +65,8 @@ public class GestionBDD {
             );
              st.executeUpdate(
                     "create table realise (\n"
-                    + "    idMachine integer null,\n"
-                    + "    idType integer null unique,\n"
+                    + "    idMachine integer null unique,\n"
+                    + "    idType integer null,\n"
                     + "    duree integer not null\n"        
                     + ")\n"
             );

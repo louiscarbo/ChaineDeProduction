@@ -3,12 +3,12 @@ package fr.insa.developpement.views.operations;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
+import com.vaadin.flow.component.checkbox.CheckboxGroupVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -27,6 +27,7 @@ public class NewOperationTypeDialog extends Dialog {
     private TextField nomTextField;
     private TextField desTextField;
     private Button saveButton;
+    private CheckboxGroup<Machine> machinesRadioButtonGroup;
 
     private TypeOperationsView parentView;
     
@@ -64,14 +65,12 @@ public class NewOperationTypeDialog extends Dialog {
     private VerticalLayout createDialogLayout() {
         this.nomTextField = new TextField("Nom");
         this.desTextField = new TextField("Description");
-        
-        // Ne fait rien pour l'instant
-        Component listeMachines = createMachinesList();
+        this.machinesRadioButtonGroup = createMachinesList();
 
         VerticalLayout dialogLayout = new VerticalLayout(
             nomTextField,
             desTextField,
-            listeMachines
+            machinesRadioButtonGroup
         );
         dialogLayout.setPadding(false);
         dialogLayout.setSpacing(false);
@@ -114,23 +113,31 @@ public class NewOperationTypeDialog extends Dialog {
     private TypeOperation createTypeOperation() {
         String nom = this.nomTextField.getValue();
         String des = this.desTextField.getValue();
+        
+        TypeOperation newTypeOperation = new TypeOperation(nom, des);
+
+        for (Machine machine : this.machinesRadioButtonGroup.getSelectedItems() ) {
+            newTypeOperation.addIdMachine(machine.getId());
+        }
     
-        return new TypeOperation(nom, des);
+        return newTypeOperation;
     }
 
     // TODO Rendre le lien entre les machines et les types d'opération actif
     private static CheckboxGroup<Machine> createMachinesList() {
-        CheckboxGroup<Machine> listeMachines = new CheckboxGroup<>();
+        CheckboxGroup<Machine> listeMachines = new CheckboxGroup<Machine>();
+        listeMachines.addThemeVariants(CheckboxGroupVariant.LUMO_VERTICAL);
+
         List<Machine> machines = new ArrayList<Machine>();
         try {
-            machines = Machine.getMachinesFromServer();
+            machines = Machine.getMachinesWithoutOperationType();
         } catch (SQLException e) {
             listeMachines.setEnabled(false);
             Notification.show("Erreur lors de la récupération des machines à sélectionner. " + e.getLocalizedMessage());
         }
 
         listeMachines.setItems(machines);
-        listeMachines.setLabel("Machines réalisant l'opération");
+        listeMachines.setLabel("Machines sans type d'opération");
         listeMachines.setRenderer(new ComponentRenderer<>(machine -> new Text(machine.getRef())));
         listeMachines.setHeight("200px");
 
