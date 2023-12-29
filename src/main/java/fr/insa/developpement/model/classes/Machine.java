@@ -3,9 +3,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.Statement;
+import java.util.Optional;
 
 import fr.insa.developpement.model.GestionBDD;
 
@@ -14,19 +15,26 @@ public class Machine {
     private String des;
     private String ref;
     private double puissance;
+    private Optional<Integer> idTypeOperationAssocie;
+    private double dureeTypeOperation;
 
     public Machine(int id, String des, String ref, double puissance) {
         this.id = id;
         this.des = des;
         this.ref = ref;
         this.puissance = puissance;
+        this.idTypeOperationAssocie = Optional.ofNullable(null);
+        this.dureeTypeOperation = 30;
     }
 
     public Machine(String des, String ref, double puissance) {
-        this.id = -1;
-        this.des = des;
-        this.ref = ref;
-        this.puissance = puissance;
+        this(-1, des, ref, puissance);
+    }
+
+    public Machine(String des, String ref, double puissance, int idTypeOperationAssocie, double dureeTypeOperation) {
+        this(des, ref, puissance);
+        this.idTypeOperationAssocie = Optional.of(idTypeOperationAssocie);
+        this.dureeTypeOperation = dureeTypeOperation;
     }
 
     public Machine() {
@@ -51,12 +59,23 @@ public class Machine {
             nextId = resultSet.getInt("next_id");
         }
 
-        //TODO Changer la durée
-        try(PreparedStatement pst = con.prepareStatement(
-                "INSERT INTO realise (idMachine, duree) VALUES (?,?)")) {
-            pst.setInt(1, nextId);
-            pst.setDouble(2, 30);
-            pst.executeUpdate();
+        if(this.idTypeOperationAssocie.isPresent()) {
+            try(PreparedStatement pst = con.prepareStatement(
+                "INSERT INTO realise (idMachine, idType, duree) VALUES (?,?,?)"
+            )) {
+                pst.setInt(1, nextId);
+                pst.setDouble(2, this.idTypeOperationAssocie.get());
+                pst.setDouble(3, this.dureeTypeOperation);
+                pst.executeUpdate();
+            }
+        } else {
+            try(PreparedStatement pst = con.prepareStatement(
+                    "INSERT INTO realise (idMachine, duree) VALUES (?,?)"
+            )) {
+                pst.setInt(1, nextId);
+                pst.setDouble(2, 30);
+                pst.executeUpdate();
+            }
         }
 
         try (PreparedStatement pst = con.prepareStatement(
@@ -184,6 +203,22 @@ public class Machine {
 
     public void setPuissance(double puissance) {
         this.puissance = puissance;
+    }
+
+    public int getIdTypeOperationAssocie() {
+        return idTypeOperationAssocie.get();
+    }
+
+    public void setIdTypeOperationAssocie(int idTypeOperationAssocie) {
+        this.idTypeOperationAssocie = Optional.of(idTypeOperationAssocie);
+    }
+    
+    public double getDureeTypeOperation() {
+        return dureeTypeOperation;
+    }
+
+    public void setDureeTypeOperation(double dureeTypeOperation) {
+        this.dureeTypeOperation = dureeTypeOperation;
     }
     
 }

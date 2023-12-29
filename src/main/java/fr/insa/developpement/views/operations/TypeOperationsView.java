@@ -1,14 +1,10 @@
 package fr.insa.developpement.views.operations;
 
-import fr.insa.developpement.model.GestionBDD;
-import fr.insa.developpement.model.classes.Machine;
-import fr.insa.developpement.model.classes.TypeOperation;
-import fr.insa.developpement.views.main.MainLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.Uses;
@@ -24,13 +20,14 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.data.renderer.TextRenderer;
-import com.vaadin.flow.function.SerializableBiConsumer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import com.vaadin.flow.theme.lumo.LumoUtility.Margin.Horizontal;
-import com.vaadin.flow.theme.lumo.LumoUtility.Margin.Vertical;
+
+import fr.insa.developpement.model.GestionBDD;
+import fr.insa.developpement.model.classes.Machine;
+import fr.insa.developpement.model.classes.TypeOperation;
+import fr.insa.developpement.views.main.MainLayout;
 
 @PageTitle("Types d'Opérations")
 @Route(value = "type-operations", layout = MainLayout.class)

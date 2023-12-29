@@ -27,7 +27,7 @@ public class NewOperationTypeDialog extends Dialog {
     private TextField nomTextField;
     private TextField desTextField;
     private Button saveButton;
-    private CheckboxGroup<Machine> machinesRadioButtonGroup;
+    private CheckboxGroup<Machine> machinesCheckboxGroup;
 
     private TypeOperationsView parentView;
     
@@ -65,12 +65,12 @@ public class NewOperationTypeDialog extends Dialog {
     private VerticalLayout createDialogLayout() {
         this.nomTextField = new TextField("Nom");
         this.desTextField = new TextField("Description");
-        this.machinesRadioButtonGroup = createMachinesList();
+        this.machinesCheckboxGroup = createMachinesList();
 
         VerticalLayout dialogLayout = new VerticalLayout(
             nomTextField,
             desTextField,
-            machinesRadioButtonGroup
+            machinesCheckboxGroup
         );
         dialogLayout.setPadding(false);
         dialogLayout.setSpacing(false);
@@ -116,14 +116,13 @@ public class NewOperationTypeDialog extends Dialog {
         
         TypeOperation newTypeOperation = new TypeOperation(nom, des);
 
-        for (Machine machine : this.machinesRadioButtonGroup.getSelectedItems() ) {
+        for (Machine machine : this.machinesCheckboxGroup.getSelectedItems() ) {
             newTypeOperation.addIdMachine(machine.getId());
         }
     
         return newTypeOperation;
     }
 
-    // TODO Rendre le lien entre les machines et les types d'opération actif
     private static CheckboxGroup<Machine> createMachinesList() {
         CheckboxGroup<Machine> listeMachines = new CheckboxGroup<Machine>();
         listeMachines.addThemeVariants(CheckboxGroupVariant.LUMO_VERTICAL);

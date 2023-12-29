@@ -108,12 +108,14 @@ public class MachinesView extends Div {
     }
 
     private Component createAddMachineButton() {
-        Dialog dialog = new NewMachineDialog(this);
-
+        
         Button button = new Button(
             "Ajouter une machine",
             new Icon(VaadinIcon.PLUS),
-            e -> dialog.open()
+            e -> {
+                Dialog dialog = new NewMachineDialog(this);
+                dialog.open();
+            }
         );
 
         button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
