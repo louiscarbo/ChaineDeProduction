@@ -170,7 +170,7 @@ public class MachinesView extends Div {
 
     private void refreshMachines() {
         try {
-            this.machines = Machine.getMachines();
+            this.machines = Machine.getMachines(GestionBDD.connectSurServeurM3());
         } catch(SQLException exception) {
             Notification.show("Erreur lors de la récupération des machines depuis le serveur : " + exception.getLocalizedMessage());
         }
@@ -178,7 +178,7 @@ public class MachinesView extends Div {
 
     public void refreshGrid() {
         try {
-            this.machines = Machine.getMachines();
+            this.machines = Machine.getMachines(GestionBDD.connectSurServeurM3());
             grid.setItems(machines);
             Notification.show("Liste des machines mise à jour avec succès.");
         } catch(SQLException exception) {

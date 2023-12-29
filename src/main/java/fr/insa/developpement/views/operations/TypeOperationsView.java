@@ -95,7 +95,7 @@ public class TypeOperationsView extends Div {
         List<String> listeNomsMachines = new ArrayList<String>();
         for(int id : typeOperation.getIdMachinesAssocies()) {
             try {
-                listeNomsMachines.add(Machine.getMachineFromId(id).getRef());
+                listeNomsMachines.add(Machine.getMachineFromId(GestionBDD.connectSurServeurM3(), id).getRef());
             } catch (SQLException e) {
                 Notification.show("Erreur lors de la récupération des machines associées aux types d'opération.");
             }

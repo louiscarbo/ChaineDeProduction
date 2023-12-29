@@ -106,70 +106,46 @@ public class Machine {
         newMachine2.save(con);
     }
 
-    public static List<Machine> getMachines() throws SQLException {
-        try (Connection conn = GestionBDD.connectSurServeurM3()) {
-            try (Statement st = conn.createStatement()) {
-                ResultSet rs = st.executeQuery("SELECT * FROM machine");
-
-                List<Machine> machines = new ArrayList<>();
-
-                while (rs.next()) {
-                    Machine machine = new Machine();
-                    machine.setId(rs.getInt("id"));
-                    machine.setDes(rs.getString("des"));
-                    machine.setRef(rs.getString("ref"));
-                    machine.setPuissance(rs.getDouble("puissance"));
-
-                    // Récupération des idMachines associées à ce type d'opération
-                    try (PreparedStatement ps = conn.prepareStatement(
-                            "SELECT idType FROM realise WHERE idMachine = ?")) {
-                        ps.setInt(1, machine.getId());
-                        ResultSet rs2 = ps.executeQuery();
-                        while (rs2.next()) {
-                            int possibleID = rs2.getInt("idType");
-                            if(possibleID != 0) {
-                                machine.setIdTypeOperationAssocie(possibleID);
-                            }
-                            break;
-                        }
-                    }
-
+    public static List<Machine> getMachines(Connection conn) throws SQLException {
+        List<Machine> machines = new ArrayList<>();
+        try (ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM machine")) {
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                Machine machine = getMachineFromId(conn, id);
+                if (machine != null) {
                     machines.add(machine);
                 }
-                return machines;
             }
         }
+        return machines;
     }
 
-    // TODO pas ouf à améliorer
-    public static Machine getMachineFromId(int id) throws SQLException {
-        try (Connection conn = GestionBDD.connectSurServeurM3()) {
-            try (PreparedStatement pst = conn.prepareStatement("SELECT * FROM machine WHERE id = ?")) {
-                pst.setInt(1, id);
-                ResultSet rs = pst.executeQuery();
+    public static Machine getMachineFromId(Connection conn, int id) throws SQLException {
+        try (PreparedStatement pst = conn.prepareStatement("SELECT * FROM machine WHERE id = ?")) {
+            pst.setInt(1, id);
+            ResultSet rs = pst.executeQuery();
 
-                while (rs.next()) {
-                    Machine machine = new Machine();
-                    machine.setId(rs.getInt("id"));
-                    machine.setDes(rs.getString("des"));
-                    machine.setRef(rs.getString("ref"));
-                    machine.setPuissance(rs.getDouble("puissance"));
+            while (rs.next()) {
+                Machine machine = new Machine();
+                machine.setId(rs.getInt("id"));
+                machine.setDes(rs.getString("des"));
+                machine.setRef(rs.getString("ref"));
+                machine.setPuissance(rs.getDouble("puissance"));
 
-                    // Récupération des idMachines associées à ce type d'opération
-                    try (PreparedStatement ps = conn.prepareStatement(
-                            "SELECT idType FROM realise WHERE idMachine = ?")) {
-                        ps.setInt(1, machine.getId());
-                        ResultSet rs2 = ps.executeQuery();
-                        while (rs2.next()) {
-                            int possibleID = rs2.getInt("idType");
-                            if(possibleID != 0) {
-                                machine.setIdTypeOperationAssocie(possibleID);
-                            }
-                            break;
+                // Récupération des idMachines associées à ce type d'opération
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "SELECT idType FROM realise WHERE idMachine = ?")) {
+                    ps.setInt(1, machine.getId());
+                    ResultSet rs2 = ps.executeQuery();
+                    while (rs2.next()) {
+                        int possibleID = rs2.getInt("idType");
+                        if(possibleID != 0) {
+                            machine.setIdTypeOperationAssocie(possibleID);
                         }
+                        break;
                     }
-                    return machine;
                 }
+                return machine;
             }
         }
         return new Machine();
