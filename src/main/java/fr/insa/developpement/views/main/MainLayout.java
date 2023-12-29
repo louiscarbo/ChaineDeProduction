@@ -24,8 +24,10 @@ import fr.insa.developpement.model.GestionBDD;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dialog.Dialog;
 
+@JsModule("prefers-color-scheme.js")
 @PageTitle("Main")
 @Route(value = "")
 public class MainLayout extends AppLayout {

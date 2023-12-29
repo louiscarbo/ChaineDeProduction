@@ -162,6 +162,7 @@ public class GestionBDD {
 
         try {
             Machine m1 =new Machine(1, "rapide","F01", 20.0);
+            m1.setDureeTypeOperation(5);
             m1.save(this.conn);
         } catch(SQLException exc) {
             System.out.println("ERREUR m1.save " + exc.getLocalizedMessage());

@@ -73,7 +73,7 @@ public class Machine {
                     "INSERT INTO realise (idMachine, duree) VALUES (?,?)"
             )) {
                 pst.setInt(1, nextId);
-                pst.setDouble(2, 30);
+                pst.setDouble(2, this.dureeTypeOperation);
                 pst.executeUpdate();
             }
         }
@@ -101,6 +101,7 @@ public class Machine {
     
     public static void fillMachineTable(Connection con) throws SQLException {
         Machine newMachine = new Machine("Drill", "MCH001", 1500);
+        newMachine.setDureeTypeOperation(20);
         newMachine.save(con);
         Machine newMachine2 = new Machine("Lathe", "MCH002", 5000);
         newMachine2.save(con);
@@ -132,7 +133,7 @@ public class Machine {
                 machine.setRef(rs.getString("ref"));
                 machine.setPuissance(rs.getDouble("puissance"));
 
-                // Récupération des idMachines associées à ce type d'opération
+                // Récupération de l'idType
                 try (PreparedStatement ps = conn.prepareStatement(
                         "SELECT idType FROM realise WHERE idMachine = ?")) {
                     ps.setInt(1, machine.getId());
@@ -142,9 +143,20 @@ public class Machine {
                         if(possibleID != 0) {
                             machine.setIdTypeOperationAssocie(possibleID);
                         }
-                        break;
                     }
                 }
+
+                // Récupération de la durée
+                try(PreparedStatement ps = conn.prepareStatement(
+                    "SELECT duree FROM realise WHERE idMachine = ?"
+                )) {
+                    ps.setInt(1, machine.getId());
+                    ResultSet rs2 = ps.executeQuery();
+                    while(rs2.next()) {
+                        machine.setDureeTypeOperation(rs2.getDouble("duree"));
+                    }
+                }
+
                 return machine;
             }
         }

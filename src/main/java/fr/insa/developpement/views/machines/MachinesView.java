@@ -99,7 +99,7 @@ public class MachinesView extends Div {
                 String nomTypeOperation = typeOperation.getNom();
 
                 span.getElement().setAttribute("theme", String.format("badge %s","contrast"));
-                span.setText(nomTypeOperation);
+                span.setText(nomTypeOperation + " - " + machine.getDureeTypeOperation() + " min");
                 return span;
             } catch (SQLException e) {
                 Notification notification = Notification.show(
