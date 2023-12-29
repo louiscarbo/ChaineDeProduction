@@ -2,6 +2,7 @@ package fr.insa.developpement.views.machines;
 
 import fr.insa.developpement.model.GestionBDD;
 import fr.insa.developpement.model.classes.Machine;
+import fr.insa.developpement.model.classes.TypeOperation;
 import fr.insa.developpement.views.main.MainLayout;
 import com.vaadin.flow.component.dialog.Dialog;
 
@@ -10,15 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -59,6 +63,9 @@ public class MachinesView extends Div {
         grid.addColumn("ref").setAutoWidth(true).setHeader("Référence");
         grid.addColumn("des").setAutoWidth(true).setHeader("Description");
         grid.addColumn("puissance").setAutoWidth(true);
+        grid.addColumn(new ComponentRenderer<>(machine -> {
+            return getOperationNameForGrid(machine);
+        })).setHeader("Opération réalisée");
         grid.addColumn(
             new ComponentRenderer<>(Button::new, (button, machine) -> {
                 button.addThemeVariants(ButtonVariant.LUMO_ICON,
@@ -78,6 +85,31 @@ public class MachinesView extends Div {
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 
         return grid;
+    }
+
+    private static Span getOperationNameForGrid(Machine machine) {
+        Span span = new Span();
+        span.setText("");
+
+        if(machine.hasTypeOperationId()) {
+            int idTypeOperationRealise = machine.getIdTypeOperationAssocie();
+            try {
+                TypeOperation typeOperation = TypeOperation.getTypeOperationFromId(idTypeOperationRealise);
+
+                String nomTypeOperation = typeOperation.getNom();
+
+                span.getElement().setAttribute("theme", String.format("badge %s","contrast"));
+                span.setText(nomTypeOperation);
+                return span;
+            } catch (SQLException e) {
+                Notification notification = Notification.show(
+                    "Erreur lors de la récupération des noms d'opérations pour la grille." + e.getLocalizedMessage()
+                );
+                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
+        }
+
+        return span;
     }
 
     private Dialog deleteMachineDialog(Machine machine) {
@@ -108,7 +140,7 @@ public class MachinesView extends Div {
     }
 
     private Component createAddMachineButton() {
-        
+
         Button button = new Button(
             "Ajouter une machine",
             new Icon(VaadinIcon.PLUS),

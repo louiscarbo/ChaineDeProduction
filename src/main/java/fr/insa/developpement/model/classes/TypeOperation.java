@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.javaparser.ast.type.Type;
+
 import fr.insa.developpement.model.GestionBDD;
 
 public class TypeOperation {
@@ -106,6 +108,35 @@ public class TypeOperation {
                 return typeOperations;
             }
         }
+    }
+
+    public static TypeOperation getTypeOperationFromId(int id) throws SQLException {
+        try (Connection conn = GestionBDD.connectSurServeurM3()) {
+            try (PreparedStatement pst = conn.prepareStatement("SELECT * FROM typeoperation WHERE id = ?")) {
+                pst.setInt(1, id);
+                ResultSet rs = pst.executeQuery();
+
+                while (rs.next()) {
+                    TypeOperation typeOperation = new TypeOperation();
+                    typeOperation.setId(rs.getInt("id"));
+                    typeOperation.setNom(rs.getString("nom"));
+                    typeOperation.setDes(rs.getString("des"));
+
+                    // Récupération des idMachines associées à ce type d'opération
+                    try (PreparedStatement ps = conn.prepareStatement(
+                            "SELECT idMachine FROM realise WHERE idType = ?")) {
+                        ps.setInt(1, typeOperation.getId());
+                        ResultSet rs2 = ps.executeQuery();
+                        while (rs2.next()) {
+                            typeOperation.addIdMachine(rs2.getInt("idMachine"));
+                        }
+                    }
+
+                    return typeOperation;
+                }
+            }
+        }
+        return new TypeOperation();
     }
 
     public int getId() {

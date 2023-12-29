@@ -120,6 +120,20 @@ public class Machine {
                     machine.setRef(rs.getString("ref"));
                     machine.setPuissance(rs.getDouble("puissance"));
 
+                    // Récupération des idMachines associées à ce type d'opération
+                    try (PreparedStatement ps = conn.prepareStatement(
+                            "SELECT idType FROM realise WHERE idMachine = ?")) {
+                        ps.setInt(1, machine.getId());
+                        ResultSet rs2 = ps.executeQuery();
+                        while (rs2.next()) {
+                            int possibleID = rs2.getInt("idType");
+                            if(possibleID != 0) {
+                                machine.setIdTypeOperationAssocie(possibleID);
+                            }
+                            break;
+                        }
+                    }
+
                     machines.add(machine);
                 }
                 return machines;
@@ -140,6 +154,20 @@ public class Machine {
                     machine.setDes(rs.getString("des"));
                     machine.setRef(rs.getString("ref"));
                     machine.setPuissance(rs.getDouble("puissance"));
+
+                    // Récupération des idMachines associées à ce type d'opération
+                    try (PreparedStatement ps = conn.prepareStatement(
+                            "SELECT idType FROM realise WHERE idMachine = ?")) {
+                        ps.setInt(1, machine.getId());
+                        ResultSet rs2 = ps.executeQuery();
+                        while (rs2.next()) {
+                            int possibleID = rs2.getInt("idType");
+                            if(possibleID != 0) {
+                                machine.setIdTypeOperationAssocie(possibleID);
+                            }
+                            break;
+                        }
+                    }
                     return machine;
                 }
             }
@@ -206,7 +234,11 @@ public class Machine {
     }
 
     public int getIdTypeOperationAssocie() {
-        return idTypeOperationAssocie.get();
+        if(idTypeOperationAssocie != null){
+            return idTypeOperationAssocie.get();
+        } else {
+            return -1;
+        }
     }
 
     public void setIdTypeOperationAssocie(int idTypeOperationAssocie) {
@@ -221,4 +253,8 @@ public class Machine {
         this.dureeTypeOperation = dureeTypeOperation;
     }
     
+    public boolean hasTypeOperationId() {
+        return !(this.idTypeOperationAssocie == null);
+    }
+
 }
