@@ -79,13 +79,14 @@ public class MainLayout extends AppLayout {
     }
 
     private Button createResetButton() {
-
         Button resetButton = new Button("Réinitialiser");
         resetButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         resetButton.addSingleClickListener(clickEvent -> {
             createResetDialog().open();
         });
-       resetButton.getStyle().set("margin-left", "10px");
+        resetButton.getStyle().set("margin-left", "10px");
+        resetButton.getStyle().set("margin-bottom", "10px");
+
 
         return resetButton;
     }
