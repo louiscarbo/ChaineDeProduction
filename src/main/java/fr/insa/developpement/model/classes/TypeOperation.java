@@ -7,8 +7,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.javaparser.ast.type.Type;
-
 import fr.insa.developpement.model.GestionBDD;
 
 public class TypeOperation {

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.Uses;
@@ -122,12 +121,14 @@ public class MachinesView extends Div {
                 try {
                     machine.delete(GestionBDD.connectSurServeurM3());
                     dialog.close();
-                    Notification.show("Machine supprimée avec succès.");
+                    Notification succesNotification = Notification.show("Machine supprimée avec succès.");
+                    succesNotification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                     this.refreshGrid();
                 } catch (SQLException e1) {
-                    Notification.show(
-                        "Une erreur est survenue lors de la suppresion de la machine : \n" + e1.getLocalizedMessage()
+                    Notification errorNotification = Notification.show(
+                            "Une erreur est survenue lors de la suppresion de la machine : \n" + e1.getLocalizedMessage()
                     );
+                    errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
                 }
             }
         );
@@ -162,7 +163,6 @@ public class MachinesView extends Div {
             new Icon(VaadinIcon.REFRESH),
             e -> refreshGrid()
         );
-        
         button.getStyle().set("margin-left", "10px");
 
         return button;

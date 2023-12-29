@@ -91,12 +91,9 @@ public class Machine {
     }
 
     public void delete(Connection con) throws SQLException {
-        try (PreparedStatement pst = con.prepareStatement(
-            "DELETE FROM machine WHERE id = ?"
-        )) {
-            pst.setInt(1, this.id);
-            pst.executeUpdate();
-        }
+        PreparedStatement pst1 = con.prepareStatement("DELETE FROM machine WHERE id = ?");
+        pst1.setInt(1, this.id);
+        pst1.executeUpdate();
     }
     
     public static void fillMachineTable(Connection con) throws SQLException {
