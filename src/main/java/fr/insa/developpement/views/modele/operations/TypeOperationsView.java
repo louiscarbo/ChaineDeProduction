@@ -1,4 +1,4 @@
-package fr.insa.developpement.views.operations;
+package fr.insa.developpement.views.modele.operations;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 import fr.insa.developpement.model.GestionBDD;
 import fr.insa.developpement.model.classes.Machine;
 import fr.insa.developpement.model.classes.TypeOperation;
-import fr.insa.developpement.views.main.MainLayout;
+import fr.insa.developpement.views.MainLayout;
 
 @PageTitle("Types d'Opérations")
 @Route(value = "type-operations", layout = MainLayout.class)

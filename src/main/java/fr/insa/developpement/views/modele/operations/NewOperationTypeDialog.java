@@ -1,4 +1,4 @@
-package fr.insa.developpement.views.operations;
+package fr.insa.developpement.views.modele.operations;
 
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.notification.Notification;

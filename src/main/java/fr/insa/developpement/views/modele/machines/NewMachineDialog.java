@@ -1,4 +1,4 @@
-package fr.insa.developpement.views.machines;
+package fr.insa.developpement.views.modele.machines;
 
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;

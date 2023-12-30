@@ -1,4 +1,4 @@
-package fr.insa.developpement.views.main;
+package fr.insa.developpement.views;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -7,6 +7,10 @@ import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
@@ -21,11 +25,6 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
 import fr.insa.developpement.model.GestionBDD;
-
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.dialog.Dialog;
 
 @JsModule("prefers-color-scheme.js")
 @PageTitle("Main")
@@ -53,6 +52,7 @@ public class MainLayout extends AppLayout {
     private void addDrawerContent() {
         H1 appName = new H1("Chaîne de Production");
         appName.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.MEDIUM);
+
         Header header = new Header(appName);
 
         Scroller scroller = new Scroller(createNavigation());
@@ -62,11 +62,14 @@ public class MainLayout extends AppLayout {
 
     private SideNav createNavigation() {
         SideNav modeleSideNav = new SideNav();
-        modeleSideNav.setLabel("Modèle");
+        modeleSideNav.setLabel("Usine");
         modeleSideNav.setCollapsible(true);
         modeleSideNav.addItem(new SideNavItem("Machines", "machines", VaadinIcon.FACTORY.create()));
         modeleSideNav.addItem(new SideNavItem("Types d'Opérations", "type-operations", VaadinIcon.COGS.create()));
         modeleSideNav.addItem(new SideNavItem("Produits", "produits", VaadinIcon.PACKAGE.create()));
+        modeleSideNav.addItem(new SideNavItem("Opérateurs", "operateurs", VaadinIcon.GROUP.create()));
+        modeleSideNav.addItem(new SideNavItem("Stock", "stock", VaadinIcon.STOCK.create()));
+        modeleSideNav.addItem(new SideNavItem("Commandes", "commandes", VaadinIcon.INVOICE.create()));
 
         return modeleSideNav;
     }

@@ -1,4 +1,4 @@
-package fr.insa.developpement.views.produits;
+package fr.insa.developpement.views.modele.produits;
 
 import java.sql.SQLException;
 

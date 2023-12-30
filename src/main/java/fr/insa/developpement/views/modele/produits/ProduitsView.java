@@ -1,8 +1,9 @@
-package fr.insa.developpement.views.produits;
+package fr.insa.developpement.views.modele.produits;
 
 import fr.insa.developpement.model.GestionBDD;
 import fr.insa.developpement.model.classes.Produit;
-import fr.insa.developpement.views.main.MainLayout;
+import fr.insa.developpement.views.MainLayout;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;

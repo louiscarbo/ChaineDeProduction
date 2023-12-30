@@ -1,9 +1,10 @@
-package fr.insa.developpement.views.machines;
+package fr.insa.developpement.views.modele.machines;
 
 import fr.insa.developpement.model.GestionBDD;
 import fr.insa.developpement.model.classes.Machine;
 import fr.insa.developpement.model.classes.TypeOperation;
-import fr.insa.developpement.views.main.MainLayout;
+import fr.insa.developpement.views.MainLayout;
+
 import com.vaadin.flow.component.dialog.Dialog;
 
 import java.sql.SQLException;
