@@ -3,6 +3,7 @@ package fr.insa.developpement.views.modele.produits;
 import java.sql.SQLException;
 
 import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -24,7 +25,7 @@ public class NewProduitDialog extends Dialog {
 
     public NewProduitDialog(ProduitsView produitsView) {
         this.parentView = produitsView;
-
+        this.setWidth("10000px");
         this.setHeaderTitle("Nouveau Produit");
 
         VerticalLayout dialogLayout = createDialogLayout();
@@ -36,6 +37,8 @@ public class NewProduitDialog extends Dialog {
         Button cancelButton = new Button("Annuler", e -> this.close());
         this.getFooter().add(cancelButton);
         this.getFooter().add(saveButton);
+        this.setDraggable(true);
+
         enableOrDisableSaveButton();
     }
 
@@ -56,15 +59,20 @@ public class NewProduitDialog extends Dialog {
     private VerticalLayout createDialogLayout() {
         this.referenceField = new TextField("Nom");
         this.descriptionField = new TextField("Description");
+        Text label = new Text("Étapes de fabrication");
+        OperationsGrids operationsGrids = new OperationsGrids();
 
         VerticalLayout dialogLayout = new VerticalLayout(
             referenceField,
-            descriptionField
+            descriptionField,
+            label,
+            operationsGrids
         );
         dialogLayout.setPadding(false);
         dialogLayout.setSpacing(false);
         dialogLayout.setAlignItems(FlexComponent.Alignment.STRETCH);
         dialogLayout.getStyle().set("width", "18rem").set("max-width", "100%");
+        dialogLayout.setSizeFull();
 
         return dialogLayout;
     }

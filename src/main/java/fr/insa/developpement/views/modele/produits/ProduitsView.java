@@ -106,12 +106,14 @@ public class ProduitsView extends Div {
     }
 
     private Component createAddProduitButton() {
-        Dialog dialog = new NewProduitDialog(this);
 
         Button button = new Button(
             "Ajouter un produit",
             new Icon(VaadinIcon.PLUS),
-            e -> dialog.open()
+            e -> {
+                Dialog dialog = new NewProduitDialog(this);
+                dialog.open();
+            }
         );
 
         button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
