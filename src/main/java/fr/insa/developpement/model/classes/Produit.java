@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import fr.insa.developpement.model.GestionBDD;
@@ -14,6 +16,9 @@ public class Produit {
     private int id;
     private String ref;
     private String des;
+
+    // Liste ordonnée contenant les étapes de fabrication du produit
+    private List<TypeOperation> etapesDeFabrication;
 
     public Produit() {
         this.id = 0;
@@ -68,6 +73,31 @@ public class Produit {
                 return produits;
             }
         }
+    }
+
+    public List<Machine> calculPlanDeFabricationIdeal() throws SQLException {
+        // Liste ordonnée des machines qui réalisent l'opération
+        List<Machine> machines = new ArrayList<Machine>();
+
+        for(TypeOperation operation: this.etapesDeFabrication) {
+            List<Integer> idMachines = operation.getIdMachinesAssocies();
+            List<Machine> machinesRealisantLOperation = new ArrayList<Machine>();
+
+            // Récupération des machines réalisant l'opération en question
+            for(int id: idMachines) {
+                machinesRealisantLOperation.add(
+                    Machine.getMachineFromId(GestionBDD.connectSurServeurM3(), id)
+                );
+            }
+
+            // Sélection de la machine ayant la durée d'opération la plus courte
+            Machine meilleureMachine = Collections.min(
+                machinesRealisantLOperation, Comparator.comparing(Machine::getDureeTypeOperation)
+            );
+            machines.add(meilleureMachine);
+        }
+
+        return machines;
     }
 
     public int getId() {

@@ -69,6 +69,18 @@ public class ProduitsView extends Div {
                 button.setIcon(new Icon(VaadinIcon.TRASH));
             })
         ).setHeader("Supprimer");
+        grid.addColumn(
+        new ComponentRenderer<>(Button::new, (button, produit) -> {
+            button.addThemeVariants(
+                ButtonVariant.LUMO_CONTRAST,
+                ButtonVariant.LUMO_PRIMARY);
+            button.addClickListener(e -> {
+                PlanFabricationIdealDialog dialog = new PlanFabricationIdealDialog();
+                dialog.open();
+            });
+            button.setText("Calcul du plan");
+        })
+        ).setHeader("Plan de fabrication idéal");
 
         refreshProduits();
         grid.setItems(produits);
