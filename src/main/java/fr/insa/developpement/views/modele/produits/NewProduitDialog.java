@@ -1,6 +1,7 @@
 package fr.insa.developpement.views.modele.produits;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Text;
@@ -14,12 +15,14 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import fr.insa.developpement.model.GestionBDD;
 import fr.insa.developpement.model.classes.Produit;
+import fr.insa.developpement.model.classes.TypeOperation;
 
 public class NewProduitDialog extends Dialog {
 
     private TextField referenceField;
     private TextField descriptionField;
     private Button saveButton;
+    private OperationsGrids operationsGrids;
 
     private ProduitsView parentView;
 
@@ -60,7 +63,7 @@ public class NewProduitDialog extends Dialog {
         this.referenceField = new TextField("Nom");
         this.descriptionField = new TextField("Description");
         Text label = new Text("Étapes de fabrication");
-        OperationsGrids operationsGrids = new OperationsGrids();
+        this.operationsGrids = new OperationsGrids();
 
         VerticalLayout dialogLayout = new VerticalLayout(
             referenceField,
@@ -89,11 +92,13 @@ public class NewProduitDialog extends Dialog {
                     Notification.show(
                         "Une erreur est survenue lors de l'enregistrement du produit sur le serveur :\n" + e1.getLocalizedMessage()
                     );
-                } finally {
-                    setFormValuesToNull();
                 }
                 dialog.close();
                 parentView.refreshGrid();
+
+                // DEBUG TODO
+                PlanFabricationOptimalDialog plan = new PlanFabricationOptimalDialog(newProduit);
+                plan.open();
             }
         );
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -102,16 +107,12 @@ public class NewProduitDialog extends Dialog {
         return saveButton;
     }
 
-    private void setFormValuesToNull() {
-        this.referenceField.setValue("");
-        this.descriptionField.setValue("");
-    }
-
     private Produit createProduit() {
         String ref = this.referenceField.getValue();
         String des = this.descriptionField.getValue();
+        List<TypeOperation> planFabrication = this.operationsGrids.getOperationsFabrication();
     
-        return new Produit(ref, des);
+        return new Produit(ref, des, planFabrication);
     }
     
 }

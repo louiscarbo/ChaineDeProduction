@@ -226,6 +226,11 @@ public class Machine {
         }
     }
 
+    public TypeOperation getTypeOperationAssocie() throws SQLException {
+        int idType = getIdTypeOperationAssocie();
+        return TypeOperation.getTypeOperationFromId(idType);
+    }
+
     public void setIdTypeOperationAssocie(int idTypeOperationAssocie) {
         this.idTypeOperationAssocie = Optional.of(idTypeOperationAssocie);
     }

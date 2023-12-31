@@ -85,4 +85,8 @@ public class OperationsGrids extends SplitLayout {
 
         return span;
     }
+
+    public List<TypeOperation> getOperationsFabrication() {
+        return this.typesOperationsSecondGrid;
+    }
 }

@@ -75,12 +75,12 @@ public class ProduitsView extends Div {
                 ButtonVariant.LUMO_CONTRAST,
                 ButtonVariant.LUMO_PRIMARY);
             button.addClickListener(e -> {
-                PlanFabricationIdealDialog dialog = new PlanFabricationIdealDialog();
+                PlanFabricationOptimalDialog dialog = new PlanFabricationOptimalDialog(produit);
                 dialog.open();
             });
             button.setText("Calcul du plan");
         })
-        ).setHeader("Plan de fabrication idéal");
+        ).setHeader("Plan de fabrication optimal");
 
         refreshProduits();
         grid.setItems(produits);

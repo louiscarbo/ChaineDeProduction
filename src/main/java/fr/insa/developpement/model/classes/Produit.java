@@ -24,17 +24,23 @@ public class Produit {
         this.id = 0;
         this.ref = "";
         this.des = "";
+        this.etapesDeFabrication = new ArrayList<TypeOperation>();
     }
 
     public Produit(String ref, String des) {
-        this.ref = ref;
-        this.des = des;
+        this(0, ref, des);
     }
 
     public Produit(int id, String ref, String des) {
         this.id = id;
         this.ref = ref;
         this.des = des;
+        this.etapesDeFabrication = new ArrayList<TypeOperation>();
+    }
+
+    public Produit(String ref, String des, List<TypeOperation> planDeFabrication) {
+        this(ref, des);
+        this.etapesDeFabrication = planDeFabrication;
     }
 
     public void save(Connection con) throws SQLException{
