@@ -36,22 +36,6 @@ public class GestionBDD {
         return con;
     }
 
-    public static String getPassPourServeurM3() {
-        // en phase de développement, je vous conseille de mettre votre 
-        // mot de passe en clair pour ne pas avoir à le retaper à chaque exécution
-        // je ne veux pas mettre le mien dans ce programme que tout le monde
-        // peut télécharger
-//        return "monpass";
-        // vous pouvez aussi le demander à chaque fois
-//        return ConsoleFdB.entreeString("pass pour serveur M3 : ");
-        // ici je le lit dans un fichier que j'ai exclu de git (.gitignore)
-        try (BufferedReader bin = new BufferedReader(new FileReader("pass.txt"))) {
-            return bin.readLine();
-        } catch (IOException ex) {
-            throw new Error("impossible de lire le mot de passe", ex);
-        }
-    }
-
     public static Connection connectSurServeurM3() throws SQLException {
         return connectGeneralMySQL("92.222.25.165", 3306,
                 "m3_hgounon01", "m3_hgounon01",
