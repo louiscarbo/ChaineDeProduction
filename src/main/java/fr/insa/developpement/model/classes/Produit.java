@@ -43,7 +43,9 @@ public class Produit {
         this.etapesDeFabrication = planDeFabrication;
     }
 
-    public void save(Connection con) throws SQLException{
+    public void save() throws SQLException{
+        Connection con = GestionBDD.getConnection();
+
         try (PreparedStatement pst = con.prepareStatement(
                 "INSERT INTO produit (ref, des) VALUES (?, ?)")){
             pst.setString(1, this.ref);
@@ -52,7 +54,9 @@ public class Produit {
         }
     }
 
-    public void delete(Connection con) throws SQLException {
+    public void delete() throws SQLException {
+        Connection con = GestionBDD.getConnection();
+
         try (PreparedStatement pst = con.prepareStatement(
             "DELETE FROM produit WHERE id = ?"
         )) {
@@ -62,22 +66,22 @@ public class Produit {
     }
 
     public static List<Produit> getProduitsFromServer() throws SQLException {
-        try (Connection conn = GestionBDD.connectSurServeurM3()) {
-            try (Statement st = conn.createStatement()) {
-                ResultSet rs = st.executeQuery("SELECT * FROM produit");
+        Connection conn = GestionBDD.getConnection();
 
-                List<Produit> produits = new ArrayList<>();
+        try (Statement st = conn.createStatement()) {
+            ResultSet rs = st.executeQuery("SELECT * FROM produit");
 
-                while (rs.next()) {
-                    Produit produit = new Produit();
-                    produit.setId(rs.getInt("id"));
-                    produit.setDes(rs.getString("des"));
-                    produit.setRef(rs.getString("ref"));
+            List<Produit> produits = new ArrayList<>();
 
-                    produits.add(produit);
-                }
-                return produits;
+            while (rs.next()) {
+                Produit produit = new Produit();
+                produit.setId(rs.getInt("id"));
+                produit.setDes(rs.getString("des"));
+                produit.setRef(rs.getString("ref"));
+
+                produits.add(produit);
             }
+            return produits;
         }
     }
 

@@ -1,12 +1,9 @@
 package fr.insa.developpement.views.modele.produits;
 
-import fr.insa.developpement.model.GestionBDD;
-import fr.insa.developpement.model.classes.Produit;
-import fr.insa.developpement.views.MainLayout;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -24,6 +21,9 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+
+import fr.insa.developpement.model.classes.Produit;
+import fr.insa.developpement.views.MainLayout;
 
 @PageTitle("Produits")
 @Route(value = "produits", layout = MainLayout.class)
@@ -98,7 +98,7 @@ public class ProduitsView extends Div {
             "Oui, supprimer",
             e -> {
                 try {
-                    produit.delete(GestionBDD.connectSurServeurM3());
+                    produit.delete();
                     dialog.close();
                     Notification.show("Machine supprimée avec succès.");
                     this.refreshGrid();

@@ -1,8 +1,5 @@
 package fr.insa.developpement.views;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -16,7 +13,6 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
@@ -30,7 +26,6 @@ import fr.insa.developpement.model.GestionBDD;
 @PageTitle("Main")
 @Route(value = "")
 public class MainLayout extends AppLayout {
-
     private H2 viewTitle;
 
     public MainLayout() {
@@ -102,12 +97,7 @@ public class MainLayout extends AppLayout {
         Button confirmationButton = new Button("Oui, réinitialiser");
         confirmationButton.addSingleClickListener(event -> {
             resetDialog.close();
-            try (Connection connection = GestionBDD.connectSurServeurM3()) {
-                GestionBDD gestionBDD = new GestionBDD(connection);
-                gestionBDD.razBDD();
-            } catch (SQLException e) {
-                Notification.show("Une erreur est survenue lors de la réinitialisation de la base de données : " + e.getLocalizedMessage());
-            }
+            GestionBDD.razBDD();
         });
         confirmationButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         confirmationButton.addClickShortcut(Key.ENTER);

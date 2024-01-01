@@ -24,7 +24,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
-import fr.insa.developpement.model.GestionBDD;
 import fr.insa.developpement.model.classes.Machine;
 import fr.insa.developpement.model.classes.TypeOperation;
 import fr.insa.developpement.views.MainLayout;
@@ -115,7 +114,7 @@ public class TypeOperationsView extends Div {
             "Oui, supprimer",
             e -> {
                 try {
-                    typeOperation.delete(GestionBDD.connectSurServeurM3());
+                    typeOperation.delete();
                     dialog.close();
                     Notification.show("Type d'opération supprimé avec succès.");
                     this.refreshGrid();
@@ -138,8 +137,7 @@ public class TypeOperationsView extends Div {
         try {
             this.typeOperations = TypeOperation.getTypesOperations();
             grid.setItems(typeOperations);
-            Notification notification = Notification.show("Liste des types d'opérations mise à jour avec succès.");
-            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            Notification.show("Liste des types d'opérations mise à jour avec succès.");
         } catch(SQLException exception) {
             Notification notification = Notification.show("Erreur lors de la mise à jour de la liste des machines : " + exception.getLocalizedMessage());
             notification.addThemeVariants(NotificationVariant.LUMO_ERROR);

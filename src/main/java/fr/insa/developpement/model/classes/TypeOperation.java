@@ -29,7 +29,8 @@ public class TypeOperation {
         this(0, "", "");
     }
 
-    public void save(Connection con) throws SQLException{
+    public void save() throws SQLException{
+        Connection con = GestionBDD.getConnection();
         con.setAutoCommit(false);
 
         try (PreparedStatement pst=con.prepareStatement(
@@ -64,7 +65,8 @@ public class TypeOperation {
         con.setAutoCommit(true);
     }
 
-    public void delete(Connection con) throws SQLException {
+    public void delete() throws SQLException {
+        Connection con = GestionBDD.getConnection();
         try (PreparedStatement pst = con.prepareStatement(
             "DELETE FROM typeoperation WHERE id = ?"
         )) {
@@ -74,7 +76,8 @@ public class TypeOperation {
     }
 
     public static List<TypeOperation> getTypesOperations() throws SQLException {
-        Connection conn = GestionBDD.connectSurServeurM3();
+        Connection conn = GestionBDD.getConnection();
+
         List<TypeOperation> typesOperations = new ArrayList<>();
         try (ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM typeoperation")) {
             while (rs.next()) {
@@ -89,32 +92,33 @@ public class TypeOperation {
     }
 
     public static TypeOperation getTypeOperationFromId(int id) throws SQLException {
-        try (Connection conn = GestionBDD.connectSurServeurM3()) {
-            try (PreparedStatement pst = conn.prepareStatement("SELECT * FROM typeoperation WHERE id = ?")) {
-                pst.setInt(1, id);
-                ResultSet rs = pst.executeQuery();
+        Connection conn = GestionBDD.getConnection();
 
-                while (rs.next()) {
-                    TypeOperation typeOperation = new TypeOperation();
-                    typeOperation.setId(rs.getInt("id"));
-                    typeOperation.setNom(rs.getString("nom"));
-                    typeOperation.setDes(rs.getString("des"));
+        try (PreparedStatement pst = conn.prepareStatement("SELECT * FROM typeoperation WHERE id = ?")) {
+            pst.setInt(1, id);
+            ResultSet rs = pst.executeQuery();
 
-                    // Récupération des idMachines associées à ce type d'opération
-                    try (PreparedStatement ps = conn.prepareStatement(
-                            "SELECT idMachine FROM realise WHERE idType = ?")) {
-                        ps.setInt(1, typeOperation.getId());
-                        ResultSet rs2 = ps.executeQuery();
-                        while (rs2.next()) {
-                            int idMachine = rs2.getInt("idMachine");
-                            typeOperation.addMachine(Machine.getMachineFromId(GestionBDD.connectSurServeurM3(), idMachine));
-                        }
+            while (rs.next()) {
+                TypeOperation typeOperation = new TypeOperation();
+                typeOperation.setId(rs.getInt("id"));
+                typeOperation.setNom(rs.getString("nom"));
+                typeOperation.setDes(rs.getString("des"));
+
+                // Récupération des idMachines associées à ce type d'opération
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "SELECT idMachine FROM realise WHERE idType = ?")) {
+                    ps.setInt(1, typeOperation.getId());
+                    ResultSet rs2 = ps.executeQuery();
+                    while (rs2.next()) {
+                        int idMachine = rs2.getInt("idMachine");
+                        typeOperation.addMachine(Machine.getMachineFromId(conn, idMachine));
                     }
-
-                    return typeOperation;
                 }
+
+                return typeOperation;
             }
         }
+
         return new TypeOperation();
     }
 

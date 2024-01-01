@@ -14,17 +14,17 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 
-import fr.insa.developpement.model.GestionBDD;
 import fr.insa.developpement.model.classes.Machine;
 import fr.insa.developpement.model.classes.TypeOperation;
 
@@ -93,12 +93,14 @@ public class NewOperationTypeDialog extends Dialog {
                 TypeOperation newTypeOperation = createTypeOperation();
                 newTypeOperation.setMachinesAssociees(new ArrayList<Machine>(machinesCheckboxGroup.getValue()));
                 try {
-                    newTypeOperation.save(GestionBDD.connectSurServeurM3());
-                    Notification.show("Type d'opération ajouté avec succès");
+                    newTypeOperation.save();
+                    Notification success = Notification.show("Type d'opération ajouté avec succès");
+                    success.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 } catch (SQLException e1) {
-                    Notification.show(
+                    Notification error = Notification.show(
                         "Une erreur est survenue lors de l'enregistrement du type d'opération sur le serveur :\n" + e1.getLocalizedMessage()
                     );
+                    error.addThemeVariants(NotificationVariant.LUMO_ERROR);
                 }
                 dialog.close();
                 parentView.refreshGrid();

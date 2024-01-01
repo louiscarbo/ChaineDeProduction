@@ -1,5 +1,11 @@
 package fr.insa.developpement.model;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+
 import fr.insa.beuvron.utils.ConsoleFdB;
 import fr.insa.beuvron.utils.exceptions.ExceptionsUtils;
 import fr.insa.beuvron.utils.list.ListUtils;
@@ -7,24 +13,47 @@ import fr.insa.developpement.model.classes.Machine;
 import fr.insa.developpement.model.classes.TypeOperation;
 import fr.insa.developpement.model.classes.Utilisateur;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-
 public class GestionBDD {
 
+    private static GestionBDD instance;
     private Connection conn;
 
-    public GestionBDD(Connection conn) {
-        this.conn = conn;
+    private GestionBDD() {
+        try {
+            this.conn = connectGeneralMySQL(
+                "92.222.25.165",
+                3306,
+                "m3_hgounon01",
+                "m3_hgounon01",
+                "ae2fe50b"
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static Connection connectGeneralMySQL(String host,
+    // La manière dont GestionBDD a été modifiée permet de ne se connecter qu'une seule fois à la BDD
+    // pour améliorer l'efficacité du projet.
+
+    // Pour récupérer une connexion à la BDD, n'importe où dans le projet, en une ligne :
+    // Connection connection = GestionBDD.getConnection();
+
+    private static GestionBDD getInstance() {
+        if (instance == null) {
+            synchronized (GestionBDD.class) {
+                if (instance == null) {
+                    instance = new GestionBDD();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public static Connection getConnection() {
+        return GestionBDD.getInstance().conn;
+    }
+
+    private static Connection connectGeneralMySQL(String host,
             int port, String database,
             String user, String pass)
             throws SQLException {
@@ -36,15 +65,10 @@ public class GestionBDD {
         return con;
     }
 
-    public static Connection connectSurServeurM3() throws SQLException {
-        return connectGeneralMySQL("92.222.25.165", 3306,
-                "m3_hgounon01", "m3_hgounon01",
-                "ae2fe50b");
-    }
-
-    public void creeSchema() throws SQLException {
-        this.conn.setAutoCommit(false);
-        try (Statement st = this.conn.createStatement()) {
+    public static void creeSchema() throws SQLException {
+        Connection conn = getConnection();
+        conn.setAutoCommit(false);
+        try (Statement st = conn.createStatement()) {
             st.executeUpdate(
                     "create table machine (\n"
                     + "    id integer not null primary key AUTO_INCREMENT,\n"
@@ -94,17 +118,18 @@ public class GestionBDD {
                     + "    add constraint fk_typeoperation_id \n"
                     + "    foreign key (idType) references typeoperation(id) \n"
             );
-            this.conn.commit();
+            conn.commit();
         } catch (SQLException ex) {
-            this.conn.rollback();
+            conn.rollback();
             throw ex;
         } finally {
-            this.conn.setAutoCommit(true);
+            conn.setAutoCommit(true);
         }
     }
 
-    public void deleteSchema() throws SQLException {
-        try (Statement st = this.conn.createStatement()) {
+    public static void deleteSchema() throws SQLException {
+        Connection conn = getConnection();
+        try (Statement st = conn.createStatement()) {
             // pour être sûr de pouvoir supprimer, il faut d'abord supprimer les liens
             // puis les tables
             // suppression des liens
@@ -141,13 +166,13 @@ public class GestionBDD {
         }
     }
 
-    public void initTest(){
+    public static void initTest(){
         try {
             TypeOperation t1= new TypeOperation(1, "Fraisage", "Enlèvement de matière");
             Machine machineBateau = new Machine();
             machineBateau.setId(1);
             t1.addMachine(machineBateau);
-            t1.save(this.conn);
+            t1.save();
         } catch (SQLException exc) {
             System.out.println("ERREUR t1.save " + exc.getLocalizedMessage());
         }
@@ -155,32 +180,33 @@ public class GestionBDD {
         try {
             Machine m1 =new Machine(1, "rapide","F01", 20.0);
             m1.setDureeTypeOperation(5);
-            m1.save(this.conn);
+            m1.save();
         } catch(SQLException exc) {
             System.out.println("ERREUR m1.save " + exc.getLocalizedMessage());
         }
    }  
     
-    public void razBDD() {
+    public static void razBDD() {
+        Connection conn = getConnection();
         try {
-            this.deleteSchema();
+            deleteSchema();
         } catch(SQLException exc) {
             System.out.println("ERREUR deleteSchema " + exc.getLocalizedMessage());
         }
         try {
-            this.creeSchema();
+            creeSchema();
         } catch(SQLException exc) {
             System.out.println("ERREUR creeSchema " + exc.getLocalizedMessage());
         }
         try {
-            Machine.fillMachineTable(this.conn);
+            Machine.fillMachineTable(conn);
         } catch(SQLException exc) {
             System.out.println("ERREUR fillMachineTable " + exc.getLocalizedMessage());
         }
-        this.initTest();
+        initTest();
     }
 
-    public void menuPrincipal() {
+    public static void menuPrincipal() {
         int rep = -1;
         while (rep != 0) {
             int i = 1;
@@ -195,13 +221,13 @@ public class GestionBDD {
             try {
                 int j = 1;
                 if (rep == j++) {
-                    this.deleteSchema();
+                    deleteSchema();
                 } else if (rep == j++) {
-                    this.creeSchema();
+                    creeSchema();
                 } else if (rep == j++) {
-                    this.razBDD();
+                    razBDD();
                 } else if (rep == j++) {
-                    this.menuUtilisateur();
+                    menuUtilisateur();
                 }
             } catch (SQLException ex) {
                 System.out.println(ExceptionsUtils.messageEtPremiersAppelsDansPackage(ex, "fr.insa.beuvron", 5));
@@ -209,7 +235,8 @@ public class GestionBDD {
         }
     }
 
-    public void menuUtilisateur() {
+    public static void menuUtilisateur() {
+        Connection conn = getConnection();
         int rep = -1;
         while (rep != 0) {
             int i = 1;
@@ -222,21 +249,17 @@ public class GestionBDD {
             try {
                 int j = 1;
                 if (rep == j++) {
-                    List<Utilisateur> users = Utilisateur.tousLesUtilisateurs(this.conn);
+                    List<Utilisateur> users = Utilisateur.tousLesUtilisateurs(conn);
                     System.out.println(users.size() + " utilisateurs : ");
                     System.out.println(ListUtils.enumerateList(users));
                 } else if (rep == j++) {
                     System.out.println("entrez un nouvel utilisateur : ");
                     Utilisateur nouveau = Utilisateur.demande();
-                    nouveau.saveInDBV1(this.conn);
+                    nouveau.saveInDBV1(conn);
                 }
             } catch (SQLException ex) {
                 System.out.println(ExceptionsUtils.messageEtPremiersAppelsDansPackage(ex, "fr.insa.beuvron", 5));
             }
         }
-    }
-
-    public Connection getConn() {
-        return conn;
     }
 }

@@ -44,7 +44,8 @@ public class Machine {
         this.puissance = 0;
     }
 
-    public void save(Connection con) throws SQLException{
+    public void save() throws SQLException{
+        Connection con = GestionBDD.getConnection();
         con.setAutoCommit(false);
         
         try (PreparedStatement pst = con.prepareStatement(
@@ -82,9 +83,9 @@ public class Machine {
     public static void fillMachineTable(Connection con) throws SQLException {
         Machine newMachine = new Machine("Drill", "MCH001", 1500);
         newMachine.setDureeTypeOperation(20);
-        newMachine.save(con);
+        newMachine.save();
         Machine newMachine2 = new Machine("Lathe", "MCH002", 5000);
-        newMachine2.save(con);
+        newMachine2.save();
     }
 
     public static List<Machine> getMachines(Connection conn) throws SQLException {
@@ -144,27 +145,26 @@ public class Machine {
     }
 
     public static List<Machine> getMachinesWithoutOperationType() throws SQLException {
-        try (Connection conn = GestionBDD.connectSurServeurM3()) {
-            try (Statement st = conn.createStatement()) {
-                ResultSet rs = st.executeQuery(
-                    "SELECT machine.*\n" +
-                        "FROM machine\n" +
-                        "LEFT JOIN realise ON realise.idMachine = machine.id\n" +
-                        "WHERE realise.idMachine IS NULL");
+        Connection conn = GestionBDD.getConnection();
+        try (Statement st = conn.createStatement()) {
+            ResultSet rs = st.executeQuery(
+                "SELECT machine.*\n" +
+                    "FROM machine\n" +
+                    "LEFT JOIN realise ON realise.idMachine = machine.id\n" +
+                    "WHERE realise.idMachine IS NULL");
 
-                List<Machine> machines = new ArrayList<>();
+            List<Machine> machines = new ArrayList<>();
 
-                while (rs.next()) {
-                    Machine machine = new Machine();
-                    machine.setId(rs.getInt("id"));
-                    machine.setDes(rs.getString("des"));
-                    machine.setRef(rs.getString("ref"));
-                    machine.setPuissance(rs.getDouble("puissance"));
+            while (rs.next()) {
+                Machine machine = new Machine();
+                machine.setId(rs.getInt("id"));
+                machine.setDes(rs.getString("des"));
+                machine.setRef(rs.getString("ref"));
+                machine.setPuissance(rs.getDouble("puissance"));
 
-                    machines.add(machine);
-                }
-                return machines;
+                machines.add(machine);
             }
+            return machines;
         }
     }
 

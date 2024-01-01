@@ -7,6 +7,7 @@ import fr.insa.developpement.views.MainLayout;
 
 import com.vaadin.flow.component.dialog.Dialog;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +121,8 @@ public class MachinesView extends Div {
             "Oui, supprimer",
             e -> {
                 try {
-                    machine.delete(GestionBDD.connectSurServeurM3());
+                    Connection conn = GestionBDD.getConnection();
+                    machine.delete(conn);
                     dialog.close();
                     Notification succesNotification = Notification.show("Machine supprimée avec succès.");
                     succesNotification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
@@ -171,7 +173,8 @@ public class MachinesView extends Div {
 
     private void refreshMachines() {
         try {
-            this.machines = Machine.getMachines(GestionBDD.connectSurServeurM3());
+            Connection conn = GestionBDD.getConnection();
+            this.machines = Machine.getMachines(conn);
         } catch(SQLException exception) {
             Notification.show("Erreur lors de la récupération des machines depuis le serveur : " + exception.getLocalizedMessage());
         }
@@ -179,7 +182,8 @@ public class MachinesView extends Div {
 
     public void refreshGrid() {
         try {
-            this.machines = Machine.getMachines(GestionBDD.connectSurServeurM3());
+            Connection conn = GestionBDD.getConnection();
+            this.machines = Machine.getMachines(conn);
             grid.setItems(machines);
             Notification.show("Liste des machines mise à jour avec succès.");
         } catch(SQLException exception) {

@@ -9,11 +9,12 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
-import fr.insa.developpement.model.GestionBDD;
+
 import fr.insa.developpement.model.classes.Produit;
 import fr.insa.developpement.model.classes.TypeOperation;
 
@@ -86,12 +87,14 @@ public class NewProduitDialog extends Dialog {
             e -> {
                 Produit newProduit = createProduit();
                 try {
-                    newProduit.save(GestionBDD.connectSurServeurM3());
-                    Notification.show("Produit ajouté avec succès");
+                    newProduit.save();
+                    Notification succes = Notification.show("Produit ajouté avec succès");
+                    succes.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 } catch (SQLException e1) {
-                    Notification.show(
+                    Notification error = Notification.show(
                         "Une erreur est survenue lors de l'enregistrement du produit sur le serveur :\n" + e1.getLocalizedMessage()
                     );
+                    error.addThemeVariants(NotificationVariant.LUMO_ERROR);
                 }
                 dialog.close();
                 parentView.refreshGrid();
