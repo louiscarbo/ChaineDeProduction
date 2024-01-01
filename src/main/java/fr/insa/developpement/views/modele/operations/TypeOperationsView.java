@@ -25,6 +25,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
 import fr.insa.developpement.model.classes.Machine;
+import fr.insa.developpement.model.classes.Realise;
 import fr.insa.developpement.model.classes.TypeOperation;
 import fr.insa.developpement.views.MainLayout;
 
@@ -72,7 +73,7 @@ public class TypeOperationsView extends Div {
                     ButtonVariant.LUMO_ERROR,
                     ButtonVariant.LUMO_TERTIARY);
                 button.addClickListener(e -> {
-                    Dialog deleteTypeOperationDialog = deleteTypeOperationDialog(typeOperation);
+                    Dialog deleteTypeOperationDialog = createDeleteTypeOperationDialog(typeOperation);
                     deleteTypeOperationDialog.open();
                 });
                 button.setIcon(new Icon(VaadinIcon.TRASH));
@@ -106,23 +107,20 @@ public class TypeOperationsView extends Div {
         return layout;
     }
 
-    private Dialog deleteTypeOperationDialog(TypeOperation typeOperation) {
+    private Dialog createDeleteTypeOperationDialog(TypeOperation typeOperation) {
         Dialog dialog = new Dialog("Êtes vous sûr ?");
-        dialog.add("Vous êtes sur le point de supprimer un type d'opération. En êtes vous sûr ?");
+        dialog.setMaxWidth("400px");
+        String body = typeOperation.hasMachines() ?
+        new String("Ce type d'opération est lié à une machine. En supprimant ce type d'opération, vous supprimerez également toutes les machines liées à ce type d'opération. Êtes-vous sûr ?")
+        : new String("Vous êtes sur le point de supprimer un type d'opération. En êtes vous sûr ?");
+        dialog.add(body);
 
         Button confirmationButton = new Button(
             "Oui, supprimer",
             e -> {
-                try {
-                    typeOperation.delete();
-                    dialog.close();
-                    Notification.show("Type d'opération supprimé avec succès.");
-                    this.refreshGrid();
-                } catch (SQLException e1) {
-                    Notification.show(
-                        "Une erreur est survenue lors de la suppresion du type d'opération : \n" + e1.getLocalizedMessage()
-                    );
-                }
+                handleDeletion(typeOperation);
+                dialog.close();
+                this.refreshGrid();
             }
         );
         confirmationButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
@@ -131,6 +129,25 @@ public class TypeOperationsView extends Div {
         dialog.getFooter().add(confirmationButton);
 
         return dialog;
+    }
+
+    public static void handleDeletion(TypeOperation typeOperation) {
+        try {
+            if(typeOperation.hasMachines()) {
+                Realise.deleteRealiseFromIdTypeOperation(typeOperation.getId());
+                typeOperation.delete();
+                for(Machine machine: typeOperation.getMachinesAssociees()) {
+                    machine.delete();
+                }
+            } else {
+                typeOperation.delete();
+            }
+            Notification succes = Notification.show("Type d'opération supprimé avec succès.");
+            succes.addThemeVariants(NotificationVariant.LUMO_SUCCESS);    
+        } catch(SQLException e) {
+            Notification error = Notification.show("Une erreur est survenue lors de la suppression du type d'opération : " + e.getLocalizedMessage());
+            error.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }
     }
 
     public void refreshGrid() {

@@ -73,7 +73,8 @@ public class Machine {
         con.setAutoCommit(true);
     }
 
-    public void delete(Connection con) throws SQLException {
+    public void delete() throws SQLException {
+        Connection con = GestionBDD.getConnection();
         PreparedStatement pst1 = con.prepareStatement("DELETE FROM machine WHERE id = ?");
         pst1.setInt(1, this.id);
         pst1.executeUpdate();

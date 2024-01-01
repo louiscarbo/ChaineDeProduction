@@ -119,7 +119,7 @@ public class TypeOperation {
             }
         }
 
-        return new TypeOperation();
+        return null;
     }
 
     // Renvoie une version simple du typeOperation sans les machines pour éviter une boucle infinie
@@ -176,6 +176,10 @@ public class TypeOperation {
 
     public List<Machine> getMachinesAssociees() {
         return machinesAssociees;
+    }
+
+    public boolean hasMachines() {
+        return !this.machinesAssociees.isEmpty();
     }
 
     @Override

@@ -1,13 +1,12 @@
 package fr.insa.developpement.views.modele.machines;
 
-import fr.insa.developpement.model.GestionBDD;
 import fr.insa.developpement.model.classes.Machine;
+import fr.insa.developpement.model.classes.Realise;
 import fr.insa.developpement.model.classes.TypeOperation;
 import fr.insa.developpement.views.MainLayout;
 
 import com.vaadin.flow.component.dialog.Dialog;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +72,7 @@ public class MachinesView extends Div {
                     ButtonVariant.LUMO_ERROR,
                     ButtonVariant.LUMO_TERTIARY);
                 button.addClickListener(e -> {
-                    Dialog deleteMachineDialog = deleteMachineDialog(machine);
+                    Dialog deleteMachineDialog = createDeleteMachineDialog(machine);
                     deleteMachineDialog.open();
                 });
                 button.setIcon(new Icon(VaadinIcon.TRASH));
@@ -104,26 +103,20 @@ public class MachinesView extends Div {
         return span;
     }
 
-    private Dialog deleteMachineDialog(Machine machine) {
+    private Dialog createDeleteMachineDialog(Machine machine) {
         Dialog dialog = new Dialog("Êtes vous sûr ?");
-        dialog.add("Vous êtes sur le point de supprimer une machine. En êtes vous sûr ?");
+        dialog.setMaxWidth("400px");
+        String body = machine.hasTypeOperation()?
+            new String("Cette machine est liée à un type d'opération. En supprimant cette machine, vous supprimerez également le type d'opération lié à cette machine. Êtes-vous sûr ?")
+            : new String("Vous êtes sur le point de supprimer une machine. En êtes vous sûr ?");
+        dialog.add(body);
 
         Button confirmationButton = new Button(
             "Oui, supprimer",
             e -> {
-                try {
-                    Connection conn = GestionBDD.getConnection();
-                    machine.delete(conn);
-                    dialog.close();
-                    Notification succesNotification = Notification.show("Machine supprimée avec succès.");
-                    succesNotification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                    this.refreshGrid();
-                } catch (SQLException e1) {
-                    Notification errorNotification = Notification.show(
-                            "Une erreur est survenue lors de la suppresion de la machine : \n" + e1.getLocalizedMessage()
-                    );
-                    errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-                }
+                handleDeletion(machine);
+                dialog.close();
+                this.refreshGrid();
             }
         );
         confirmationButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
@@ -132,6 +125,23 @@ public class MachinesView extends Div {
         dialog.getFooter().add(confirmationButton);
 
         return dialog;
+    }
+
+    private static void handleDeletion(Machine machine) {
+        try {
+            if(machine.hasTypeOperation()){
+                Realise.deleteRealiseFromIdMachine(machine.getId());
+                machine.getTypeOperation().delete();
+                machine.delete();
+            } else {
+                machine.delete();
+            }
+            Notification succes = Notification.show("Machine supprimée avec succès.");
+            succes.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        } catch(SQLException e) {
+            Notification error = Notification.show("Une erreur est survenue lors de la suppression de la machine : " + e.getLocalizedMessage());
+            error.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }
     }
 
     private Component createAddMachineButton() {

@@ -6,6 +6,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.notification.Notification.Position;
+
 import fr.insa.beuvron.utils.ConsoleFdB;
 import fr.insa.beuvron.utils.exceptions.ExceptionsUtils;
 import fr.insa.beuvron.utils.list.ListUtils;
@@ -28,7 +32,10 @@ public class GestionBDD {
                 "ae2fe50b"
             );
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            Notification fatalError = Notification.show("Impossible de se connecter à la base de données. Une erreur est survenue : " + e.getLocalizedMessage());
+            fatalError.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            fatalError.setDuration(10);
+            fatalError.setPosition(Position.MIDDLE);
         }
     }
 
