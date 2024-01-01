@@ -2,7 +2,6 @@ package fr.insa.developpement;
 
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.server.AppShellSettings;
-import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 
 import org.springframework.boot.SpringApplication;
@@ -17,8 +16,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @Theme(value = "mytodo")
-@PWA(name = "Chaîne de Production",
-     shortName = "MyProd")
 public class Application implements AppShellConfigurator {
 
     @Override
