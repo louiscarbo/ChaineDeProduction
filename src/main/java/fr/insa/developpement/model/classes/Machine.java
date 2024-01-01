@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
+
 import fr.insa.developpement.model.GestionBDD;
 
 public class Machine {
@@ -222,4 +225,51 @@ public class Machine {
         return this.typeOperation.isPresent();
     }
 
+    public void changeRef(String ref) {
+        setRef(ref);
+        Connection connection = GestionBDD.getConnection();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                "UPDATE machine SET ref = ? WHERE id = ?"
+            );
+            preparedStatement.setString(1, ref);
+            preparedStatement.setInt(2, this.id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            Notification error = Notification.show("Une erreur est survenue lors du changement de la référence de la machine : " + e.getLocalizedMessage());
+            error.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }
+    }
+
+    public void changeDes(String des) {
+        setDes(des);
+        Connection connection = GestionBDD.getConnection();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                "UPDATE machine SET des = ? WHERE id = ?"
+            );
+            preparedStatement.setString(1, des);
+            preparedStatement.setInt(2, this.id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            Notification error = Notification.show("Une erreur est survenue lors du changement de la description de la machine : " + e.getLocalizedMessage());
+            error.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }
+    }
+
+    public void changePuissance(Double puissance) {
+        setPuissance(puissance);
+        Connection connection = GestionBDD.getConnection();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                "UPDATE machine SET puissance = ? WHERE id = ?"
+            );
+            preparedStatement.setDouble(1, puissance);
+            preparedStatement.setInt(2, this.id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            Notification error = Notification.show("Une erreur est survenue lors du changement de la puissance de la machine : " + e.getLocalizedMessage());
+            error.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }
+    }
 }

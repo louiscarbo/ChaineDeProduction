@@ -1,6 +1,8 @@
 package fr.insa.developpement;
 
 import com.vaadin.flow.component.page.AppShellConfigurator;
+import com.vaadin.flow.server.AppShellSettings;
+import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 
 import org.springframework.boot.SpringApplication;
@@ -15,7 +17,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @Theme(value = "mytodo")
+@PWA(name = "Chaîne de Production",
+     shortName = "MyProd")
 public class Application implements AppShellConfigurator {
+
+    @Override
+    public void configurePage(AppShellSettings settings) {
+        settings.addFavIcon("icon", "webapp/factory-icon.png", "160x160");
+        settings.addLink("shortcut icon", "webapp/favicon.ico");
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

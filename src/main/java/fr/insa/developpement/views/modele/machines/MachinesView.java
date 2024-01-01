@@ -12,11 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Focusable;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -25,6 +27,9 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -60,9 +65,11 @@ public class MachinesView extends Div {
 
     private Component createGrid() {
         grid = new Grid<>(Machine.class, false);
-        grid.addColumn("ref").setAutoWidth(true).setHeader("Référence");
-        grid.addColumn("des").setAutoWidth(true).setHeader("Description");
-        grid.addColumn("puissance").setAutoWidth(true);
+
+        // Créations des colonnes de la grille
+        Grid.Column<Machine> refColumn = grid.addColumn("ref").setAutoWidth(true).setHeader("Référence");
+        Grid.Column<Machine> desColumn = grid.addColumn("des").setAutoWidth(true).setHeader("Description");
+        Grid.Column<Machine> puissanceColumn = grid.addColumn("puissance").setAutoWidth(true);
         grid.addColumn(new ComponentRenderer<>(machine -> {
             return getOperationNameForGrid(machine);
         })).setHeader("Opération réalisée");
@@ -79,12 +86,58 @@ public class MachinesView extends Div {
             })
         ).setHeader("Supprimer");
 
+        // Création d'un Binder et d'un Editor permettant l'édition de la grille
+        Binder<Machine> binder = new Binder<>(Machine.class);
+        Editor<Machine> editor = grid.getEditor();
+        editor.setBinder(binder);
+
+        // TextField d'édition de la référence
+        TextField refField = new TextField();
+        refField.setWidthFull();
+        addCloseHandler(refField, editor);
+        binder.forField(refField)
+                .asRequired("Une référence doit être indiquée.")
+                .bind(Machine::getRef, Machine::changeRef);
+        refColumn.setEditorComponent(refField);
+
+        // Textfield d'édition de la description
+        TextField desField = new TextField();
+        desField.setWidthFull();
+        addCloseHandler(desField, editor);
+        binder.forField(desField)
+                .asRequired("Une description doit être indiquée.")
+                .bind(Machine::getDes, Machine::changeDes);
+        desColumn.setEditorComponent(desField);
+
+        // NumberField d'édition de la puissance
+        NumberField puissanceField = new NumberField();
+        puissanceField.setWidthFull();
+        addCloseHandler(puissanceField, editor);
+        binder.forField(puissanceField)
+                .asRequired("Une puissance doit être indiquée.")
+                .bind(Machine::getPuissance, Machine::changePuissance);
+        puissanceColumn.setEditorComponent(puissanceField);
+
+        // Ecoute du double clic pour activer l'édition de la ligne
+        grid.addItemDoubleClickListener(e -> {
+            editor.editItem(e.getItem());
+            Component editorComponent = e.getColumn().getEditorComponent();
+            if (editorComponent instanceof Focusable) {
+                ((Focusable<?>) editorComponent).focus();
+            }
+        });
+
         refreshMachines();
         grid.setItems(machines);
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 
         return grid;
+    }
+
+    private static void addCloseHandler(Component textField, Editor<Machine> editor) {
+        textField.getElement().addEventListener("keydown", e -> editor.cancel())
+                .setFilter("event.code === 'Escape'");
     }
 
     private static Span getOperationNameForGrid(Machine machine) {
@@ -154,6 +207,8 @@ public class MachinesView extends Div {
                 dialog.open();
             }
         );
+        //<theme-editor-local-classname>
+        button.addClassName("machines-view-button-1");
 
         button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         button.getStyle().set("margin-left", "10px");
