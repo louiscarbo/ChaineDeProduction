@@ -2,6 +2,7 @@ package fr.insa.developpement.views;
 
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -98,6 +99,7 @@ public class MainLayout extends AppLayout {
         confirmationButton.addSingleClickListener(event -> {
             resetDialog.close();
             GestionBDD.razBDD();
+            UI.getCurrent().getPage().reload();
         });
         confirmationButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         confirmationButton.addClickShortcut(Key.ENTER);

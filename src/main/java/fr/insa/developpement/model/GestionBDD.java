@@ -148,13 +148,9 @@ public class GestionBDD {
     public static void deleteSchema() throws SQLException {
         Connection conn = getConnection();
         try (Statement st = conn.createStatement()) {
-            // pour être sûr de pouvoir supprimer, il faut d'abord supprimer les liens
-            // puis les tables
-            // suppression des liens
             try {
                 st.executeUpdate("alter table realise drop constraint fk_machine_id");
             } catch (SQLException ex) {
-                // nothing to do : maybe the constraint was not created
             }
             try {
                 st.executeUpdate("alter table realise drop constraint fk_typeoperation_id");
@@ -168,7 +164,6 @@ public class GestionBDD {
                 st.executeUpdate("alter table operation drop constraint fk_produit_id");
             } catch (SQLException ex) {
             }
-            // je peux maintenant supprimer les tables
             try {
                 st.executeUpdate("drop table machine");
             } catch (SQLException ex) {
