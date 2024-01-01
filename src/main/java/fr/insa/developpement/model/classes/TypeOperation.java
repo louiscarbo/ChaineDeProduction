@@ -104,17 +104,37 @@ public class TypeOperation {
                 typeOperation.setNom(rs.getString("nom"));
                 typeOperation.setDes(rs.getString("des"));
 
-                // Récupération des idMachines associées à ce type d'opération
+                // Récupération des machines associées à ce type d'opération
                 try (PreparedStatement ps = conn.prepareStatement(
                         "SELECT idMachine FROM realise WHERE idType = ?")) {
                     ps.setInt(1, typeOperation.getId());
                     ResultSet rs2 = ps.executeQuery();
                     while (rs2.next()) {
                         int idMachine = rs2.getInt("idMachine");
-                        typeOperation.addMachine(Machine.getMachineFromId(conn, idMachine));
+                        typeOperation.addMachine(Machine.getMachineFromId(idMachine));
                     }
                 }
 
+                return typeOperation;
+            }
+        }
+
+        return new TypeOperation();
+    }
+
+    // Renvoie une version simple du typeOperation sans les machines pour éviter une boucle infinie
+    public static TypeOperation getSimpleTypeOperationFromId(int id) throws SQLException {
+        Connection conn = GestionBDD.getConnection();
+
+        try (PreparedStatement pst = conn.prepareStatement("SELECT * FROM typeoperation WHERE id = ?")) {
+            pst.setInt(1, id);
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                TypeOperation typeOperation = new TypeOperation();
+                typeOperation.setId(rs.getInt("id"));
+                typeOperation.setNom(rs.getString("nom"));
+                typeOperation.setDes(rs.getString("des"));
                 return typeOperation;
             }
         }

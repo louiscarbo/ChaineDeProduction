@@ -117,10 +117,6 @@ public class NewOperationTypeDialog extends Dialog {
         String des = this.desTextField.getValue();
         
         TypeOperation newTypeOperation = new TypeOperation(nom, des);
-
-        for (Machine machine : this.machinesCheckboxGroup.getSelectedItems() ) {
-            newTypeOperation.addMachine(machine);
-        }
     
         return newTypeOperation;
     }

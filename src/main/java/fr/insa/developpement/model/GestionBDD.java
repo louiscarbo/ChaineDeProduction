@@ -168,11 +168,16 @@ public class GestionBDD {
 
     public static void initTest(){
         try {
-            TypeOperation t1= new TypeOperation(1, "Fraisage", "Enlèvement de matière");
-            Machine machineBateau = new Machine();
-            machineBateau.setId(1);
-            t1.addMachine(machineBateau);
+            Machine newMachine = new Machine("Drill", "MCH001", 1500);
+            newMachine.save();
+
+            TypeOperation t1= new TypeOperation("Fraisage", "Enlèvement de matière");
+            t1.addMachine(Machine.getMachineFromId(1));
             t1.save();
+
+            Machine newMachine2 = new Machine("Lathe", "MCH002", 5000);
+            newMachine2.save();
+
         } catch (SQLException exc) {
             System.out.println("ERREUR t1.save " + exc.getLocalizedMessage());
         }
@@ -187,7 +192,6 @@ public class GestionBDD {
    }  
     
     public static void razBDD() {
-        Connection conn = getConnection();
         try {
             deleteSchema();
         } catch(SQLException exc) {
@@ -197,11 +201,6 @@ public class GestionBDD {
             creeSchema();
         } catch(SQLException exc) {
             System.out.println("ERREUR creeSchema " + exc.getLocalizedMessage());
-        }
-        try {
-            Machine.fillMachineTable(conn);
-        } catch(SQLException exc) {
-            System.out.println("ERREUR fillMachineTable " + exc.getLocalizedMessage());
         }
         initTest();
     }

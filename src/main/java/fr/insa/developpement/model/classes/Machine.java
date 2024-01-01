@@ -19,12 +19,7 @@ public class Machine {
     private double dureeTypeOperation;
 
     public Machine(int id, String des, String ref, double puissance) {
-        this.id = id;
-        this.des = des;
-        this.ref = ref;
-        this.puissance = puissance;
-        this.typeOperation = Optional.ofNullable(null);
-        this.dureeTypeOperation = 30;
+        this(id, des, ref, puissance, null, 30);
     }
 
     public Machine(String des, String ref, double puissance) {
@@ -32,16 +27,20 @@ public class Machine {
     }
 
     public Machine(String des, String ref, double puissance, TypeOperation typeOperation, double dureeTypeOperation) {
-        this(des, ref, puissance);
-        this.typeOperation = Optional.of(typeOperation);
+        this(-1, des, ref, puissance, typeOperation, dureeTypeOperation);
+    }
+
+    public Machine(int id, String des, String ref, double puissance, TypeOperation typeOperation, double dureeTypeOperation) {
+        this.id = id;
+        this.des = des;
+        this.ref = ref;
+        this.puissance = puissance;
+        this.typeOperation = Optional.ofNullable(typeOperation);
         this.dureeTypeOperation = dureeTypeOperation;
     }
 
     public Machine() {
-        this.id = -1;
-        this.des = "";
-        this.ref = "";
-        this.puissance = 0;
+        this(-1, "", "", 0, null, 30);
     }
 
     public void save() throws SQLException{
@@ -88,12 +87,13 @@ public class Machine {
         newMachine2.save();
     }
 
-    public static List<Machine> getMachines(Connection conn) throws SQLException {
+    public static List<Machine> getMachines() throws SQLException {
+        Connection conn = GestionBDD.getConnection();
         List<Machine> machines = new ArrayList<>();
         try (ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM machine")) {
             while (rs.next()) {
                 int id = rs.getInt("id");
-                Machine machine = getMachineFromId(conn, id);
+                Machine machine = getMachineFromId(id);
                 if (machine != null) {
                     machines.add(machine);
                 }
@@ -102,7 +102,8 @@ public class Machine {
         return machines;
     }
 
-    public static Machine getMachineFromId(Connection conn, int id) throws SQLException {
+    public static Machine getMachineFromId(int id) throws SQLException {
+        Connection conn = GestionBDD.getConnection();
         try (PreparedStatement pst = conn.prepareStatement("SELECT * FROM machine WHERE id = ?")) {
             pst.setInt(1, id);
             ResultSet rs = pst.executeQuery();
@@ -122,7 +123,7 @@ public class Machine {
                     while (rs2.next()) {
                         int possibleID = rs2.getInt("idType");
                         if(possibleID != 0) {
-                            machine.setTypeOperation(TypeOperation.getTypeOperationFromId(possibleID));
+                            machine.setTypeOperation(TypeOperation.getSimpleTypeOperationFromId(possibleID));
                         }
                     }
                 }
@@ -141,7 +142,7 @@ public class Machine {
                 return machine;
             }
         }
-        return new Machine();
+        return null;
     }
 
     public static List<Machine> getMachinesWithoutOperationType() throws SQLException {
