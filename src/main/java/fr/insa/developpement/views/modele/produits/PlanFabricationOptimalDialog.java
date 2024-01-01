@@ -105,6 +105,7 @@ public class PlanFabricationOptimalDialog extends Dialog {
         machineSpan.add(vlayout);
         machineSpan.addClassName(LumoUtility.BorderRadius.LARGE);
         machineSpan.addClassName(LumoUtility.Background.CONTRAST_10);
+        machineSpan.addClassName(LumoUtility.Margin.MEDIUM);
 
         return machineSpan;
     }
