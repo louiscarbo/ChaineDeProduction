@@ -160,6 +160,14 @@ public class GestionBDD {
                 st.executeUpdate("alter table realise drop constraint fk_typeoperation_id");
             } catch (SQLException ex) {
             }
+            try {
+                st.executeUpdate("alter table operation drop constraint fk_typeoperation_idoperation");
+            } catch (SQLException ex) {
+            }
+            try {
+                st.executeUpdate("alter table operation drop constraint fk_produit_id");
+            } catch (SQLException ex) {
+            }
             // je peux maintenant supprimer les tables
             try {
                 st.executeUpdate("drop table machine");
