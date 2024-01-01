@@ -46,44 +46,27 @@ public class Machine {
 
     public void save(Connection con) throws SQLException{
         con.setAutoCommit(false);
-        int nextId;
-
-        try(PreparedStatement pst = con.prepareStatement(
-                "SELECT AUTO_INCREMENT AS next_id\n" + 
-                    "FROM information_schema.TABLES\n" + 
-                    "WHERE TABLE_SCHEMA = 'm3_hgounon01'\n" +
-                    "AND TABLE_NAME = 'machine'"
-            )) {
-            ResultSet resultSet = pst.executeQuery();
-            resultSet.next();
-            nextId = resultSet.getInt("next_id");
-        }
-
-        if(this.idTypeOperationAssocie.isPresent()) {
-            try(PreparedStatement pst = con.prepareStatement(
-                "INSERT INTO realise (idMachine, idType, duree) VALUES (?,?,?)"
-            )) {
-                pst.setInt(1, nextId);
-                pst.setDouble(2, this.idTypeOperationAssocie.get());
-                pst.setDouble(3, this.dureeTypeOperation);
-                pst.executeUpdate();
-            }
-        } else {
-            try(PreparedStatement pst = con.prepareStatement(
-                    "INSERT INTO realise (idMachine, duree) VALUES (?,?)"
-            )) {
-                pst.setInt(1, nextId);
-                pst.setDouble(2, this.dureeTypeOperation);
-                pst.executeUpdate();
-            }
-        }
-
+        
         try (PreparedStatement pst = con.prepareStatement(
                 "INSERT INTO machine (ref, des, puissance) VALUES (?, ?, ?)")){
             pst.setString(1, this.ref);
             pst.setString(2, this.des);
             pst.setDouble(3, this.puissance);
             pst.executeUpdate();
+        }
+
+        // Si l'utilisateur a renseigné l'opération réalisée par la machine, on l'enregistre
+        if(this.idTypeOperationAssocie.isPresent()) {
+            PreparedStatement pst = con.prepareStatement("SELECT MAX(id) AS latestId FROM machine");
+            ResultSet rs = pst.executeQuery();
+            rs.next();
+            int machineID = rs.getInt("latestId");
+
+            PreparedStatement realiseStatement = con.prepareStatement("INSERT INTO realise (idMachine, idType, duree) VALUES (?,?,?)");
+            realiseStatement.setInt(1, machineID);
+            realiseStatement.setInt(2, this.idTypeOperationAssocie.get());
+            realiseStatement.setDouble(3, this.dureeTypeOperation);
+            realiseStatement.executeUpdate();
         }
 
         con.commit();
@@ -164,11 +147,10 @@ public class Machine {
         try (Connection conn = GestionBDD.connectSurServeurM3()) {
             try (Statement st = conn.createStatement()) {
                 ResultSet rs = st.executeQuery(
-                    "SELECT * FROM machine\n" +
-                        "WHERE id IN (\n" +
-                        "    SELECT idMachine FROM realise\n" +
-                        "    WHERE idType IS NULL\n" +
-                        ");");
+                    "SELECT machine.*\n" +
+                        "FROM machine\n" +
+                        "LEFT JOIN realise ON realise.idMachine = machine.id\n" +
+                        "WHERE realise.idMachine IS NULL");
 
                 List<Machine> machines = new ArrayList<>();
 

@@ -32,7 +32,7 @@ public class OperationsGrids extends SplitLayout {
     private Grid<TypeOperation> createSelectionGrid() {
         List<TypeOperation> typeOperations = new ArrayList<TypeOperation>();
         try {
-            typeOperations = TypeOperation.getTypeOperationsFromServer();
+            typeOperations = TypeOperation.getTypesOperations();
         } catch (SQLException e) {
             Notification errorNotification = Notification.show(
                 "Erreur lors de la récupération des types d'opérations depuis la base de données. " + e.getLocalizedMessage()

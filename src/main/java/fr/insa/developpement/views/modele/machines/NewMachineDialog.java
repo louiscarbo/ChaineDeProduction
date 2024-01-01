@@ -142,7 +142,7 @@ public class NewMachineDialog extends Dialog {
         List<TypeOperation> typesOperations = new ArrayList<TypeOperation>();
 
         try {
-            typesOperations = TypeOperation.getTypeOperationsFromServer();
+            typesOperations = TypeOperation.getTypesOperations();
         } catch(SQLException exc) {
             listeTypeOperations.setEnabled(false);
             Notification notification = Notification.show(

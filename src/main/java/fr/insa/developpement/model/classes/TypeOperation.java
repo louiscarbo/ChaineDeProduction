@@ -3,7 +3,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,13 +12,13 @@ public class TypeOperation {
     private int id;
     private String des;
     private String nom;
-    private List<Integer> idMachinesAssocies = new ArrayList<Integer>();
+    private List<Machine> machinesAssociees;
 
     public TypeOperation(int id, String nom, String des) {
         this.id = id;
         this.des = des;
         this.nom = nom;
-        this.idMachinesAssocies = new ArrayList<>();
+        this.machinesAssociees = new ArrayList<Machine>();
     }
 
     public TypeOperation(String nom, String des) {
@@ -27,42 +26,38 @@ public class TypeOperation {
     }
 
     public TypeOperation() {
-        this.id = 0;
-        this.des = "";
-        this.nom = "";
+        this(0, "", "");
     }
 
     public void save(Connection con) throws SQLException{
-        int nextIdType = 0;
         con.setAutoCommit(false);
 
-        // Récupère le prochain ID attribué par la BDD au prochain type d'opération créé
-        // Pour chaque machine qui réalise l'opération, modifie l'objet realise accordément
-        try(PreparedStatement pst = con.prepareStatement(
-                "SELECT AUTO_INCREMENT AS next_id\n" + 
-                    "FROM information_schema.TABLES\n" + 
-                    "WHERE TABLE_SCHEMA = 'm3_hgounon01'\n" +
-                    "AND TABLE_NAME = 'typeoperation'"
-            )) {
-            ResultSet resultSet = pst.executeQuery();
-            resultSet.next();
-            nextIdType = resultSet.getInt("next_id");
-
-            for (Integer idMachine : idMachinesAssocies) {
-                PreparedStatement pst2 = con.prepareStatement(
-                    "UPDATE realise SET idType = ? WHERE idMachine = ?"
-                );
-                pst2.setInt(1, nextIdType);
-                pst2.setInt(2, idMachine);
-                pst2.executeUpdate();
-            }
-        }
-
         try (PreparedStatement pst=con.prepareStatement(
-                "INSERT INTO typeoperation (nom,des) VALUES (?,?)")){
+                "INSERT INTO typeoperation (nom,des) VALUES (?,?)"
+        )){
             pst.setString(1, this.nom);
             pst.setString(2 ,this.des);
             pst.executeUpdate();
+        }
+
+        int newTypeOperationId;
+        try (PreparedStatement pst = con.prepareStatement(
+            "SELECT MAX(id) AS latestId FROM typeoperation"
+        )) {
+            ResultSet rs = pst.executeQuery();
+            rs.next();
+            newTypeOperationId = rs.getInt("latestId");
+
+            // Pour chaque machine qui réalise l'opération, crée l'objet réalise
+            for (Machine machine : machinesAssociees) {
+                PreparedStatement pst2 = con.prepareStatement(
+                    "INSERT INTO realise (idType, idMachine, duree) VALUES (?,?,?)"
+                );
+                pst2.setInt(1, newTypeOperationId);
+                pst2.setInt(2, machine.getId());
+                pst2.setDouble(3, machine.getDureeTypeOperation());
+                pst2.executeUpdate();
+            }
         }
 
         con.commit();
@@ -78,34 +73,19 @@ public class TypeOperation {
         }
     }
 
-    public static List<TypeOperation> getTypeOperationsFromServer() throws SQLException {
-        try (Connection conn = GestionBDD.connectSurServeurM3()) {
-            try (Statement st = conn.createStatement()) {
-                ResultSet rs = st.executeQuery("SELECT * FROM typeoperation");
-
-                List<TypeOperation> typeOperations = new ArrayList<>();
-
-                while (rs.next()) {
-                    // Récupération de l'ID, du nom et de la description du type d'opération
-                    TypeOperation typeOperation = new TypeOperation();
-                    typeOperation.setId(rs.getInt("id"));
-                    typeOperation.setNom(rs.getString("nom"));
-                    typeOperation.setDes(rs.getString("des"));
-
-                    // Récupération des idMachines associées à ce type d'opération
-                    try (PreparedStatement ps = conn.prepareStatement(
-                            "SELECT idMachine FROM realise WHERE idType = ?")) {
-                        ps.setInt(1, typeOperation.getId());
-                        ResultSet rs2 = ps.executeQuery();
-                        while (rs2.next()) {
-                            typeOperation.addIdMachine(rs2.getInt("idMachine"));
-                        }
-                    }
-                    typeOperations.add(typeOperation);
+    public static List<TypeOperation> getTypesOperations() throws SQLException {
+        Connection conn = GestionBDD.connectSurServeurM3();
+        List<TypeOperation> typesOperations = new ArrayList<>();
+        try (ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM typeoperation")) {
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                TypeOperation typeOperation = getTypeOperationFromId(id);
+                if (typeOperation != null) {
+                    typesOperations.add(typeOperation);
                 }
-                return typeOperations;
             }
         }
+        return typesOperations;
     }
 
     public static TypeOperation getTypeOperationFromId(int id) throws SQLException {
@@ -126,7 +106,8 @@ public class TypeOperation {
                         ps.setInt(1, typeOperation.getId());
                         ResultSet rs2 = ps.executeQuery();
                         while (rs2.next()) {
-                            typeOperation.addIdMachine(rs2.getInt("idMachine"));
+                            int idMachine = rs2.getInt("idMachine");
+                            typeOperation.addMachine(Machine.getMachineFromId(GestionBDD.connectSurServeurM3(), idMachine));
                         }
                     }
 
@@ -161,16 +142,16 @@ public class TypeOperation {
         this.nom = nom;
     }
 
-    public List<Integer> getIdMachinesAssocies() {
-        return idMachinesAssocies;
+    public void addMachine(Machine newMachine) {
+        this.machinesAssociees.add(newMachine);
     }
 
-    public void setIdMachinesAssocies(List<Integer> idMachinesAssocies){
-        this.idMachinesAssocies = idMachinesAssocies;
+    public void setMachinesAssociees(List<Machine> machines) {
+        this.machinesAssociees = machines;
     }
 
-    public void addIdMachine(int newIdMachine) {
-        this.idMachinesAssocies.add(newIdMachine);
+    public List<Machine> getMachinesAssociees() {
+        return machinesAssociees;
     }
 
     @Override

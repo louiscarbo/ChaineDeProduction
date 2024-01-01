@@ -101,14 +101,14 @@ public class GestionBDD {
                 "CREATE INDEX fk_machine_id ON realise (idMachine)"
             );
             st.executeUpdate(
-                    "alter table machine \n"
+                    "alter table realise \n"
                     + "    add constraint fk_machine_id \n"
-                    + "    foreign key (id) references realise(idMachine) \n"
+                    + "    foreign key (idMachine) references machine(id) \n"
             );
             st.executeUpdate(
-                    "alter table typeoperation \n"
+                    "alter table realise \n"
                     + "    add constraint fk_typeoperation_id \n"
-                    + "    foreign key (id) references realise(idType) \n"
+                    + "    foreign key (idType) references typeoperation(id) \n"
             );
             this.conn.commit();
         } catch (SQLException ex) {
@@ -125,12 +125,12 @@ public class GestionBDD {
             // puis les tables
             // suppression des liens
             try {
-                st.executeUpdate("alter table machine drop constraint fk_machine_id");
+                st.executeUpdate("alter table realise drop constraint fk_machine_id");
             } catch (SQLException ex) {
                 // nothing to do : maybe the constraint was not created
             }
             try {
-                st.executeUpdate("alter table typeoperation drop constraint fk_typeoperation_id");
+                st.executeUpdate("alter table realise drop constraint fk_typeoperation_id");
             } catch (SQLException ex) {
             }
             // je peux maintenant supprimer les tables
@@ -160,7 +160,9 @@ public class GestionBDD {
     public void initTest(){
         try {
             TypeOperation t1= new TypeOperation(1, "Fraisage", "Enlèvement de matière");
-            t1.addIdMachine(1);
+            Machine machineBateau = new Machine();
+            machineBateau.setId(1);
+            t1.addMachine(machineBateau);
             t1.save(this.conn);
         } catch (SQLException exc) {
             System.out.println("ERREUR t1.save " + exc.getLocalizedMessage());

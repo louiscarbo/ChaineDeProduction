@@ -86,15 +86,7 @@ public class Produit {
         List<Machine> machines = new ArrayList<Machine>();
 
         for(TypeOperation operation: this.etapesDeFabrication) {
-            List<Integer> idMachines = operation.getIdMachinesAssocies();
-            List<Machine> machinesRealisantLOperation = new ArrayList<Machine>();
-
-            // Récupération des machines réalisant l'opération en question
-            for(int id: idMachines) {
-                machinesRealisantLOperation.add(
-                    Machine.getMachineFromId(GestionBDD.connectSurServeurM3(), id)
-                );
-            }
+            List<Machine> machinesRealisantLOperation = operation.getMachinesAssociees();
 
             // Sélection de la machine ayant la durée d'opération la plus courte
             Machine meilleureMachine = Collections.min(

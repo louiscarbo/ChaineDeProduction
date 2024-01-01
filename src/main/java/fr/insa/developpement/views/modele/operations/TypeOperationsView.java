@@ -54,7 +54,7 @@ public class TypeOperationsView extends Div {
 
     public void refreshTypeOperations() {
         try {
-            this.typeOperations = TypeOperation.getTypeOperationsFromServer();
+            this.typeOperations = TypeOperation.getTypesOperations();
         } catch(SQLException exception) {
             Notification.show("Erreur lors de la récupération des types d'opérations depuis le serveur : " + exception.getLocalizedMessage());
         }
@@ -93,12 +93,8 @@ public class TypeOperationsView extends Div {
         HorizontalLayout layout = new HorizontalLayout();
 
         List<String> listeNomsMachines = new ArrayList<String>();
-        for(int id : typeOperation.getIdMachinesAssocies()) {
-            try {
-                listeNomsMachines.add(Machine.getMachineFromId(GestionBDD.connectSurServeurM3(), id).getRef());
-            } catch (SQLException e) {
-                Notification.show("Erreur lors de la récupération des machines associées aux types d'opération.");
-            }
+        for(Machine machine : typeOperation.getMachinesAssociees()) {
+            listeNomsMachines.add(machine.getRef());
         }
 
         for(String nomMachine: listeNomsMachines){
@@ -140,7 +136,7 @@ public class TypeOperationsView extends Div {
 
     public void refreshGrid() {
         try {
-            this.typeOperations = TypeOperation.getTypeOperationsFromServer();
+            this.typeOperations = TypeOperation.getTypesOperations();
             grid.setItems(typeOperations);
             Notification notification = Notification.show("Liste des types d'opérations mise à jour avec succès.");
             notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);

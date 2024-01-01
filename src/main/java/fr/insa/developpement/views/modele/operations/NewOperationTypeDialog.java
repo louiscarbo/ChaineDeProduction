@@ -1,22 +1,28 @@
 package fr.insa.developpement.views.modele.operations;
 
-import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.checkbox.CheckboxGroupVariant;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import fr.insa.developpement.model.GestionBDD;
 import fr.insa.developpement.model.classes.Machine;
@@ -85,6 +91,7 @@ public class NewOperationTypeDialog extends Dialog {
             "Ajouter",
             e -> {
                 TypeOperation newTypeOperation = createTypeOperation();
+                newTypeOperation.setMachinesAssociees(new ArrayList<Machine>(machinesCheckboxGroup.getValue()));
                 try {
                     newTypeOperation.save(GestionBDD.connectSurServeurM3());
                     Notification.show("Type d'opération ajouté avec succès");
@@ -92,8 +99,6 @@ public class NewOperationTypeDialog extends Dialog {
                     Notification.show(
                         "Une erreur est survenue lors de l'enregistrement du type d'opération sur le serveur :\n" + e1.getLocalizedMessage()
                     );
-                } finally {
-                    setFormValuesToNull();
                 }
                 dialog.close();
                 parentView.refreshGrid();
@@ -105,11 +110,6 @@ public class NewOperationTypeDialog extends Dialog {
         return saveButton;
     }
 
-    private void setFormValuesToNull() {
-        this.nomTextField.setValue("");
-        this.desTextField.setValue("");
-    }
-
     private TypeOperation createTypeOperation() {
         String nom = this.nomTextField.getValue();
         String des = this.desTextField.getValue();
@@ -117,7 +117,7 @@ public class NewOperationTypeDialog extends Dialog {
         TypeOperation newTypeOperation = new TypeOperation(nom, des);
 
         for (Machine machine : this.machinesCheckboxGroup.getSelectedItems() ) {
-            newTypeOperation.addIdMachine(machine.getId());
+            newTypeOperation.addMachine(machine);
         }
     
         return newTypeOperation;
@@ -137,9 +137,35 @@ public class NewOperationTypeDialog extends Dialog {
 
         listeMachines.setItems(machines);
         listeMachines.setLabel("Machines sans type d'opération");
-        listeMachines.setRenderer(new ComponentRenderer<>(machine -> new Text(machine.getRef())));
+        listeMachines.setRenderer(new ComponentRenderer<>(machine -> createMachineCheckboxLayout(machine)));
         listeMachines.setHeight("200px");
 
         return listeMachines;
+    }
+
+    private static HorizontalLayout createMachineCheckboxLayout(Machine machine) {
+        HorizontalLayout hlayout = new HorizontalLayout();
+
+        hlayout.add(new Text(machine.getRef()));
+
+        Span spacer = new Span();
+        spacer.setWidthFull();
+        hlayout.add(spacer);
+
+        NumberField dureeField = new NumberField();
+        dureeField.setSuffixComponent(new Div(new Text("min")));
+        dureeField.setValue(Double.valueOf(30));
+        dureeField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+        dureeField.setValueChangeMode(ValueChangeMode.EAGER);
+        hlayout.add(dureeField);
+
+        dureeField.addValueChangeListener( event -> {
+            if(dureeField.getValue() != null) {
+                machine.setDureeTypeOperation(dureeField.getValue());
+            }
+        });
+
+        hlayout.setAlignItems(Alignment.CENTER);
+        return hlayout;
     }
 }
