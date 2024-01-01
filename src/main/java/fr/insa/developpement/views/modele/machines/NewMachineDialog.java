@@ -118,9 +118,9 @@ public class NewMachineDialog extends Dialog {
         Machine newMachine = new Machine(des, ref, puissance);
         
         if(!this.typesOperationsRadioButtonGroup.isEmpty()) {
-            int idTypeOperation = this.typesOperationsRadioButtonGroup.getValue().getId();
+            TypeOperation typeOperation = this.typesOperationsRadioButtonGroup.getValue();
             double dureeTypeOperation = this.dureeField.getValue();
-            newMachine.setIdTypeOperationAssocie(idTypeOperation);
+            newMachine.setTypeOperation(typeOperation);
             newMachine.setDureeTypeOperation(dureeTypeOperation);
         }
 

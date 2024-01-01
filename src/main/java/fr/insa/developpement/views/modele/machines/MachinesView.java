@@ -92,22 +92,13 @@ public class MachinesView extends Div {
         Span span = new Span();
         span.setText("");
 
-        if(machine.hasTypeOperationId()) {
-            int idTypeOperationRealise = machine.getIdTypeOperationAssocie();
-            try {
-                TypeOperation typeOperation = TypeOperation.getTypeOperationFromId(idTypeOperationRealise);
+        if(machine.hasTypeOperation()) {
+            TypeOperation typeOperation = machine.getTypeOperation();
+            String nomTypeOperation = typeOperation.getNom();
 
-                String nomTypeOperation = typeOperation.getNom();
-
-                span.getElement().setAttribute("theme", String.format("badge %s","contrast"));
-                span.setText(nomTypeOperation + " - " + machine.getDureeTypeOperation() + " min");
-                return span;
-            } catch (SQLException e) {
-                Notification notification = Notification.show(
-                    "Erreur lors de la récupération des noms d'opérations pour la grille." + e.getLocalizedMessage()
-                );
-                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-            }
+            span.getElement().setAttribute("theme", String.format("badge %s","contrast"));
+            span.setText(nomTypeOperation + " - " + machine.getDureeTypeOperation() + " min");
+            return span;
         }
 
         return span;

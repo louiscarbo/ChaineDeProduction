@@ -15,7 +15,7 @@ public class Machine {
     private String des;
     private String ref;
     private double puissance;
-    private Optional<Integer> idTypeOperationAssocie;
+    private Optional<TypeOperation> typeOperation;
     private double dureeTypeOperation;
 
     public Machine(int id, String des, String ref, double puissance) {
@@ -23,7 +23,7 @@ public class Machine {
         this.des = des;
         this.ref = ref;
         this.puissance = puissance;
-        this.idTypeOperationAssocie = Optional.ofNullable(null);
+        this.typeOperation = Optional.ofNullable(null);
         this.dureeTypeOperation = 30;
     }
 
@@ -31,9 +31,9 @@ public class Machine {
         this(-1, des, ref, puissance);
     }
 
-    public Machine(String des, String ref, double puissance, int idTypeOperationAssocie, double dureeTypeOperation) {
+    public Machine(String des, String ref, double puissance, TypeOperation typeOperation, double dureeTypeOperation) {
         this(des, ref, puissance);
-        this.idTypeOperationAssocie = Optional.of(idTypeOperationAssocie);
+        this.typeOperation = Optional.of(typeOperation);
         this.dureeTypeOperation = dureeTypeOperation;
     }
 
@@ -57,7 +57,7 @@ public class Machine {
         }
 
         // Si l'utilisateur a renseigné l'opération réalisée par la machine, on l'enregistre
-        if(this.idTypeOperationAssocie.isPresent()) {
+        if(this.typeOperation.isPresent()) {
             PreparedStatement pst = con.prepareStatement("SELECT MAX(id) AS latestId FROM machine");
             ResultSet rs = pst.executeQuery();
             rs.next();
@@ -65,7 +65,7 @@ public class Machine {
 
             PreparedStatement realiseStatement = con.prepareStatement("INSERT INTO realise (idMachine, idType, duree) VALUES (?,?,?)");
             realiseStatement.setInt(1, machineID);
-            realiseStatement.setInt(2, this.idTypeOperationAssocie.get());
+            realiseStatement.setInt(2, this.typeOperation.get().getId());
             realiseStatement.setDouble(3, this.dureeTypeOperation);
             realiseStatement.executeUpdate();
         }
@@ -114,7 +114,7 @@ public class Machine {
                 machine.setRef(rs.getString("ref"));
                 machine.setPuissance(rs.getDouble("puissance"));
 
-                // Récupération de l'idType
+                // Récupération du typeOperation
                 try (PreparedStatement ps = conn.prepareStatement(
                         "SELECT idType FROM realise WHERE idMachine = ?")) {
                     ps.setInt(1, machine.getId());
@@ -122,7 +122,7 @@ public class Machine {
                     while (rs2.next()) {
                         int possibleID = rs2.getInt("idType");
                         if(possibleID != 0) {
-                            machine.setIdTypeOperationAssocie(possibleID);
+                            machine.setTypeOperation(TypeOperation.getTypeOperationFromId(possibleID));
                         }
                     }
                 }
@@ -200,21 +200,12 @@ public class Machine {
         this.puissance = puissance;
     }
 
-    public int getIdTypeOperationAssocie() {
-        if(idTypeOperationAssocie != null){
-            return idTypeOperationAssocie.get();
-        } else {
-            return -1;
-        }
+    public TypeOperation getTypeOperation() {
+        return this.typeOperation.get();
     }
 
-    public TypeOperation getTypeOperationAssocie() throws SQLException {
-        int idType = getIdTypeOperationAssocie();
-        return TypeOperation.getTypeOperationFromId(idType);
-    }
-
-    public void setIdTypeOperationAssocie(int idTypeOperationAssocie) {
-        this.idTypeOperationAssocie = Optional.of(idTypeOperationAssocie);
+    public void setTypeOperation(TypeOperation typeOperation) {
+        this.typeOperation = Optional.of(typeOperation);
     }
     
     public double getDureeTypeOperation() {
@@ -225,8 +216,8 @@ public class Machine {
         this.dureeTypeOperation = dureeTypeOperation;
     }
     
-    public boolean hasTypeOperationId() {
-        return !(this.idTypeOperationAssocie == null);
+    public boolean hasTypeOperation() {
+        return this.typeOperation.isPresent();
     }
 
 }

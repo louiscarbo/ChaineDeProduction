@@ -81,16 +81,7 @@ public class PlanFabricationOptimalDialog extends Dialog {
         vlayout.add(new Hr());
 
         // Operation réalisée
-        String operationName = "";
-        try {
-            operationName = machine.getTypeOperationAssocie().getNom();
-        } catch (SQLException e) {
-            Notification error = Notification.show(
-                "Erreur lors de la récupération du type d'opération associé à un machine : " +
-                e.getLocalizedMessage()
-            );
-            error.addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }
+        String operationName = machine.getTypeOperation().getNom();
         HorizontalLayout operation = createPropertyHorizontalLayout("Opération :", operationName);
         operation.setAlignItems(FlexComponent.Alignment.BASELINE);
         vlayout.add(operation);
