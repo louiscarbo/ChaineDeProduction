@@ -98,10 +98,6 @@ public class NewProduitDialog extends Dialog {
                 }
                 dialog.close();
                 parentView.refreshGrid();
-
-                // DEBUG TODO
-                PlanFabricationOptimalDialog plan = new PlanFabricationOptimalDialog(newProduit);
-                plan.open();
             }
         );
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);

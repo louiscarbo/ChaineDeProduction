@@ -51,9 +51,25 @@ public class Produit {
             pst.setString(1, this.ref);
             pst.setString(2, this.des);
             pst.executeUpdate();
+
+            PreparedStatement pst1 = con.prepareStatement("SELECT MAX(id) AS latestId FROM produit");
+            ResultSet rs = pst1.executeQuery();
+            rs.next();
+            int produitID = rs.getInt("latestId");
+            
+            int rang = 1;
+            for(TypeOperation typeOperation: this.etapesDeFabrication) {
+                PreparedStatement pst2 = con.prepareStatement("INSERT INTO operation(idType, idProduit, rang) VALUES (?,?,?)");
+                pst2.setInt(1, typeOperation.getId());
+                pst2.setInt(2, produitID);
+                pst2.setInt(3, rang);
+                pst2.executeUpdate();
+                rang++;
+            }
         }
     }
 
+    // TODO Adapter pour respecter Operation dans la BDD ? (foreign key)
     public void delete() throws SQLException {
         Connection con = GestionBDD.getConnection();
 
@@ -75,12 +91,33 @@ public class Produit {
 
             while (rs.next()) {
                 Produit produit = new Produit();
-                produit.setId(rs.getInt("id"));
+                int idProduit = rs.getInt("id");
+                produit.setId(idProduit);
                 produit.setDes(rs.getString("des"));
                 produit.setRef(rs.getString("ref"));
 
+                // Récupère la liste ordonnée  des IDs des types d'opérations liés
+                PreparedStatement pst = conn.prepareStatement(
+                    "SELECT idType FROM operation WHERE idProduit = ?"
+                );
+                pst.setInt(1, idProduit);
+                ResultSet resultSet = pst.executeQuery();
+                List<Integer> idsTypes = new ArrayList<>();
+                while (resultSet.next()) {
+                    int idType = resultSet.getInt("idType");
+                    idsTypes.add(idType);
+                }
+
+                // Crée la liste des étapes de fabrication
+                List<TypeOperation> etapesDeFabrication = new ArrayList<TypeOperation>();
+                for (int id: idsTypes) {
+                    etapesDeFabrication.add(TypeOperation.getTypeOperationFromId(id));
+                }
+                produit.setEtapesFabrication(etapesDeFabrication);
+
                 produits.add(produit);
             }
+
             return produits;
         }
     }
@@ -121,5 +158,12 @@ public class Produit {
         this.des = des;
     }
 
+    public void setEtapesFabrication(List<TypeOperation> etapesFabrication) {
+        this.etapesDeFabrication = etapesFabrication;
+    }
+
+    public List<TypeOperation> getEtapesFabrication() {
+        return this.etapesDeFabrication;
+    }
     
 }

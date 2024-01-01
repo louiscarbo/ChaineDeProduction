@@ -108,8 +108,9 @@ public class GestionBDD {
             st.executeUpdate(
                     "create table operation (\n"
                     + "    id integer not null primary key AUTO_INCREMENT,\n"
-                    + "    idType integer not null unique,\n"
-                    + "    idproduit integer not null unique\n"  
+                    + "    idType integer not null,\n"
+                    + "    idProduit integer not null,\n"
+                    + "    rang integer not null"
                     + ")\n"
             );
             st.executeUpdate(
@@ -124,6 +125,16 @@ public class GestionBDD {
                     "alter table realise \n"
                     + "    add constraint fk_typeoperation_id \n"
                     + "    foreign key (idType) references typeoperation(id) \n"
+            );
+            st.executeUpdate(
+                    "alter table operation \n"
+                    + "    add constraint fk_typeoperation_idoperation \n"
+                    + "    foreign key (idType) references typeoperation(id) \n"
+            );
+            st.executeUpdate(
+                    "alter table operation \n"
+                    + "    add constraint fk_produit_id \n"
+                    + "    foreign key (idProduit) references produit(id) \n"
             );
             conn.commit();
         } catch (SQLException ex) {
