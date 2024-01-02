@@ -50,6 +50,11 @@ public class Commande {
         return null;
     }
 
+    // TODO Créer la fonction getCommandesForClient()
+    public static List<Commande> getCommandesForClient() throws SQLException {
+        return new ArrayList<Commande>();
+    }
+
     public int getId() {
         return id;
     }
