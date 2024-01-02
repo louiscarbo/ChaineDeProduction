@@ -84,6 +84,13 @@ public class GestionBDD {
                     + "    puissance double not null\n"   
                     + ")\n"
             );
+            st.executeUpdate(
+                    "create table typeoperation (\n"
+                    + "    id integer not null primary key AUTO_INCREMENT,\n"
+                    + "    nom varchar(100) not null unique,\n"
+                    + "    des varchar(100) not null\n"
+                    + ")\n"
+            );
              st.executeUpdate(
                     "create table realise (\n"
                     + "    idMachine integer null unique,\n"
@@ -92,11 +99,17 @@ public class GestionBDD {
                     + ")\n"
             );
             st.executeUpdate(
-                    "create table typeoperation (\n"
-                    + "    id integer not null primary key AUTO_INCREMENT,\n"
-                    + "    nom varchar(100) not null unique,\n"
-                    + "    des varchar(100) not null\n"
-                    + ")\n"
+                "CREATE INDEX fk_machine_id ON realise (idMachine)"
+            );
+            st.executeUpdate(
+                    "alter table realise \n"
+                    + "    add constraint fk_machine_id \n"
+                    + "    foreign key (idMachine) references machine(id) \n"
+            );
+            st.executeUpdate(
+                    "alter table realise \n"
+                    + "    add constraint fk_typeoperation_id \n"
+                    + "    foreign key (idType) references typeoperation(id) \n"
             );
              st.executeUpdate(
                     "create table produit (\n"
@@ -114,19 +127,6 @@ public class GestionBDD {
                     + ")\n"
             );
             st.executeUpdate(
-                "CREATE INDEX fk_machine_id ON realise (idMachine)"
-            );
-            st.executeUpdate(
-                    "alter table realise \n"
-                    + "    add constraint fk_machine_id \n"
-                    + "    foreign key (idMachine) references machine(id) \n"
-            );
-            st.executeUpdate(
-                    "alter table realise \n"
-                    + "    add constraint fk_typeoperation_id \n"
-                    + "    foreign key (idType) references typeoperation(id) \n"
-            );
-            st.executeUpdate(
                     "alter table operation \n"
                     + "    add constraint fk_typeoperation_idoperation \n"
                     + "    foreign key (idType) references typeoperation(id) \n"
@@ -134,6 +134,31 @@ public class GestionBDD {
             st.executeUpdate(
                     "alter table operation \n"
                     + "    add constraint fk_produit_id \n"
+                    + "    foreign key (idProduit) references produit(id) \n"
+            );
+            st.executeUpdate(
+                    "create table commande (\n"
+                    + "    id integer not null primary key AUTO_INCREMENT,\n"
+                    + "    nom_client VARCHAR(100) not null,\n"
+                    + "    date_commande DATE not null\n"
+                    + ")\n"
+            );
+            st.executeUpdate(
+                    "create table produit_commande (\n"
+                    + "    id integer not null primary key AUTO_INCREMENT,\n"
+                    + "    idCommande integer not null,\n"
+                    + "    idProduit integer not null,\n"
+                    + "    quantite integer not null"
+                    + ")\n"
+            );
+            st.executeUpdate(
+                    "alter table produit_commande \n"
+                    + "    add constraint fk_idCommande_produitCommande \n"
+                    + "    foreign key (idCommande) references commande(id) \n"
+            );
+            st.executeUpdate(
+                    "alter table produit_commande \n"
+                    + "    add constraint fk_idProduit_produitCommande \n"
                     + "    foreign key (idProduit) references produit(id) \n"
             );
             conn.commit();
@@ -162,6 +187,14 @@ public class GestionBDD {
             }
             try {
                 st.executeUpdate("alter table operation drop constraint fk_produit_id");
+            } catch (SQLException ex) {
+            }
+            try {
+                st.executeUpdate("alter table produit_commande drop constraint fk_idCommande_produitCommande");
+            } catch (SQLException ex) {
+            }
+            try {
+                st.executeUpdate("alter table produit_commande drop constraint fk_idProduit_produitCommande");
             } catch (SQLException ex) {
             }
             try {
