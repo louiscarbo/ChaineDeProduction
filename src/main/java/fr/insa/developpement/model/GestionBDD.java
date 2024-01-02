@@ -139,8 +139,8 @@ public class GestionBDD {
             st.executeUpdate(
                     "create table commande (\n"
                     + "    id integer not null primary key AUTO_INCREMENT,\n"
-                    + "    nom_client VARCHAR(100) not null,\n"
-                    + "    date_commande DATE not null\n"
+                    + "    nomClient VARCHAR(100) not null,\n"
+                    + "    dateCommande DATE not null\n"
                     + ")\n"
             );
             st.executeUpdate(
