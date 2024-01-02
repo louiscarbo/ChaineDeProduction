@@ -9,7 +9,7 @@ import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-@PageTitle("Client Connexion")
+@PageTitle("Connexion Espace de Commande")
 @Route(value = "client-connexion")
 @Uses(Icon.class)
 public class ClientConnexionView extends Div {
@@ -37,7 +37,7 @@ public class ClientConnexionView extends Div {
         loginOverlay.setForgotPasswordButtonVisible(false);
         loginOverlay.setI18n(i18n);
         loginOverlay.addLoginListener(e -> {
-            UI.getCurrent().navigate("test");
+            UI.getCurrent().navigate("client-commande");
         });
 
         add(loginOverlay);
