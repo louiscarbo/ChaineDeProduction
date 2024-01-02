@@ -13,13 +13,18 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.editor.Editor;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -30,29 +35,39 @@ import fr.insa.developpement.model.classes.Commande;
 // TODO Adapter pour que ça colle à la partie "client"
 @PageTitle("Espace de Commande")
 @Route("client-commande")
-public class EspaceDeCommande extends VerticalLayout {
+public class EspaceDeCommande extends VerticalLayout implements HasUrlParameter<String> {
     
     private Client client;
     private Grid<Commande> grid;
     private List<Commande> commandes = new ArrayList<>();
 
     public EspaceDeCommande() {
-        setSizeFull();
+        createLayout();        
+    }
+
+    private void createLayout() {
+        this.removeAll();
+        this.setSizeFull();
+        this.setSpacing(false);
+        this.setPadding(false);
+
+        Div hSpacer = new Div();
+        hSpacer.setSizeFull();
+
+        String clientName = client == null ? "Client Inexistant" : client.getNom();
+        Span clientNameBadge = new Span(clientName);
+        clientNameBadge.getElement().getThemeList().add("badge");
 
         HorizontalLayout hlayout = new HorizontalLayout(
             createAddCommandeButton(),
-            createRefreshGridButton()
+            createRefreshGridButton(),
+            hSpacer,
+            clientNameBadge
         );
+        hlayout.setWidthFull();
+        hlayout.setPadding(true);
 
-        VerticalLayout layout = new VerticalLayout(
-            hlayout,
-            createGrid()
-        );
-        layout.setSizeFull();
-        layout.setPadding(false);
-        layout.setSpacing(false);
-
-        add(layout);
+        this.add(hlayout, createGrid());
     }
 
     private Component createGrid() {
@@ -144,6 +159,19 @@ public class EspaceDeCommande extends VerticalLayout {
         } catch(SQLException exception) {
             Notification.show("Erreur lors de la mise à jour de la liste des commandes : " + exception.getLocalizedMessage());
         }
+    }
+
+    @Override
+    public void setParameter(BeforeEvent event, String parameter) {
+        try {
+            int idClient = Integer.parseInt(parameter);
+            this.client = Client.getClientFromId(idClient);
+            this.createLayout();
+        } catch (Exception e) {
+            Notification error = Notification.show("Impossible de récupérer les commandes. L'identifiant client doit être un nombre : " + e.getLocalizedMessage());
+            error.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }
+        refreshGrid();
     }
 
 }

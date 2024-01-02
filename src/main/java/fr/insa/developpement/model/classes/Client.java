@@ -26,7 +26,17 @@ public class Client {
         }
         return null;
     }
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof Client)) {
+            return false;
+        }
+
+        Client otherClient = (Client) obj;
+        return id == otherClient.id;
+    }
+
     public Client(int id, String nom) {
         this.id = id;
         this.nom = nom;

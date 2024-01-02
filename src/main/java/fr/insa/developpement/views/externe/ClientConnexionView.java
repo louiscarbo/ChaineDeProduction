@@ -1,6 +1,5 @@
 package fr.insa.developpement.views.externe;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
@@ -10,7 +9,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 @PageTitle("Connexion Espace de Commande")
-@Route(value = "client-connexion")
+@Route(value = "client")
 @Uses(Icon.class)
 public class ClientConnexionView extends Div {
 
@@ -36,8 +35,12 @@ public class ClientConnexionView extends Div {
         
         loginOverlay.setForgotPasswordButtonVisible(false);
         loginOverlay.setI18n(i18n);
+
         loginOverlay.addLoginListener(e -> {
-            UI.getCurrent().navigate("client-commande");
+            if(loginOverlay.getUI().isPresent()) {
+                System.out.println("\n\n\n" + loginOverlay.getId());
+                loginOverlay.getUI().get().navigate("client-commande/" + loginOverlay.getId());
+            }
         });
 
         add(loginOverlay);

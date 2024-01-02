@@ -52,13 +52,8 @@ public class Commande {
     }
 
     public static List<Commande> getCommandesForClient(Client client) throws SQLException {
-        List<Commande> commandes = new ArrayList<Commande>();
-        commandes = getCommandes();
-        for(Commande commande: commandes) {
-            if(commande.getClient() != client) {
-                commandes.remove(commande);
-            }
-        }
+        List<Commande> commandes = getCommandes();
+        commandes.removeIf(commande -> !commande.getClient().equals(client));
         return commandes;
     }
 

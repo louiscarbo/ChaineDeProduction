@@ -67,6 +67,9 @@ public class CommandesView extends Div {
         grid.addColumn(new ComponentRenderer<Text, Commande>(commande -> {
             return new Text(commande.getClient().getNom());
         })).setHeader("Client");
+        grid.addColumn(new ComponentRenderer<Text, Commande>(commande -> {
+            return new Text(String.valueOf(commande.getClient().getId()));
+        })).setHeader("Identifiant Client");
         grid.addColumn(
             new ComponentRenderer<>(Button::new, (button, commande) -> {
                 button.addThemeVariants(ButtonVariant.LUMO_ICON,
