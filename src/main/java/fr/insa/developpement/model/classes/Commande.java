@@ -16,8 +16,8 @@ import fr.insa.developpement.model.GestionBDD;
 
 public class Commande {
     private int id;
-    private String nomClient;
     private Date date;
+    private Client client;
 
     public static List<Commande> getCommandes() throws SQLException {
         Connection conn = GestionBDD.getConnection();
@@ -41,18 +41,25 @@ public class Commande {
             ResultSet rs = pst.executeQuery();
 
             while (rs.next()) {
-                String nomClient = rs.getString("nomClient");
                 Date dateCommande = rs.getDate("dateCommande");
-                Commande commande = new Commande(id, nomClient, dateCommande);
+                int idClient = rs.getInt("idClient");
+                Commande commande = new Commande(id, dateCommande);
+                commande.setClient(Client.getClientFromId(idClient));
                 return commande;
             }
         }
         return null;
     }
 
-    // TODO Créer la fonction getCommandesForClient()
-    public static List<Commande> getCommandesForClient() throws SQLException {
-        return new ArrayList<Commande>();
+    public static List<Commande> getCommandesForClient(Client client) throws SQLException {
+        List<Commande> commandes = new ArrayList<Commande>();
+        commandes = getCommandes();
+        for(Commande commande: commandes) {
+            if(commande.getClient() != client) {
+                commandes.remove(commande);
+            }
+        }
+        return commandes;
     }
 
     public int getId() {
@@ -61,30 +68,6 @@ public class Commande {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getNomClient() {
-        return nomClient;
-    }
-
-    public void setNomClient(String nomClient) {
-        this.nomClient = nomClient;
-    }
-
-    public void changeNomClient(String nomClient) {
-        setNomClient(nomClient);
-        Connection connection = GestionBDD.getConnection();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                "UPDATE commande SET nomClient = ? WHERE id = ?"
-            );
-            preparedStatement.setString(1, this.nomClient);
-            preparedStatement.setInt(2, this.id);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            Notification error = Notification.show("Une erreur est survenue lors du changement du nom du client de la commande : " + e.getLocalizedMessage());
-            error.addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }
     }
 
     public void delete() throws SQLException {
@@ -106,6 +89,14 @@ public class Commande {
         this.date = dateCommande;
     }
 
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
     public void changeDate(LocalDate date) {
         setDate(Date.valueOf(date));
         Connection connection = GestionBDD.getConnection();
@@ -122,15 +113,13 @@ public class Commande {
         }
     }
 
-    public Commande(int id, String nomClient, Date dateCommande) {
+    public Commande(int id, Date dateCommande) {
         this.id = id;
-        this.nomClient = nomClient;
         this.date = dateCommande;
     }
 
     public Commande() {
         this.id = 0;
-        this.nomClient = "";
         this.date = Date.valueOf(LocalDate.now());
     }    
 }

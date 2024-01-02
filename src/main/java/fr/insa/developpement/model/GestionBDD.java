@@ -137,11 +137,22 @@ public class GestionBDD {
                     + "    foreign key (idProduit) references produit(id) \n"
             );
             st.executeUpdate(
+                    "create table client (\n"
+                    + "    id integer not null primary key AUTO_INCREMENT,\n"
+                    + "    nom varchar(50) not null\n"
+                    + ")\n"
+            );
+            st.executeUpdate(
                     "create table commande (\n"
                     + "    id integer not null primary key AUTO_INCREMENT,\n"
-                    + "    nomClient VARCHAR(100) not null,\n"
+                    + "    idClient integer not null,\n"
                     + "    dateCommande DATE not null\n"
                     + ")\n"
+            );
+            st.executeUpdate(
+                    "alter table commande \n"
+                    + "    add constraint fk_idClient \n"
+                    + "    foreign key (idClient) references client(id) \n"
             );
             st.executeUpdate(
                     "create table produit_commande (\n"
@@ -198,7 +209,15 @@ public class GestionBDD {
             } catch (SQLException ex) {
             }
             try {
+                st.executeUpdate("alter table commande drop constraint fk_idClient");
+            } catch (SQLException ex) {
+            }
+            try {
                 st.executeUpdate("drop table machine");
+            } catch (SQLException ex) {
+            }
+            try {
+                st.executeUpdate("drop table client");
             } catch (SQLException ex) {
             }
             try {

@@ -2,3 +2,9 @@
  * This file has been created by the Vaadin Theme Editor. Please note that
  * manual changes to individual CSS properties may be overwritten by the theme editor.
  */
+vaadin-button {
+  --lumo-button-size:var(--lumo-size-m);
+  border-radius:var(--lumo-border-radius-m);
+}
+
+vaadin-button::part(label) { font-size:var(--lumo-font-size-m); }
