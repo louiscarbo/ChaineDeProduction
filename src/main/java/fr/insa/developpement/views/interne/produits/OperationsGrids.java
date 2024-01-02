@@ -1,4 +1,4 @@
-package fr.insa.developpement.views.modele.produits;
+package fr.insa.developpement.views.interne.produits;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

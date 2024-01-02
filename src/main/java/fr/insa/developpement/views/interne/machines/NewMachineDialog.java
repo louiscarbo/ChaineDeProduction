@@ -1,4 +1,4 @@
-package fr.insa.developpement.views.modele.machines;
+package fr.insa.developpement.views.interne.machines;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

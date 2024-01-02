@@ -1,4 +1,4 @@
-package fr.insa.developpement.views;
+package fr.insa.developpement.views.interne;
 
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Text;

@@ -232,7 +232,7 @@ public class Machine {
             PreparedStatement preparedStatement = connection.prepareStatement(
                 "UPDATE machine SET ref = ? WHERE id = ?"
             );
-            preparedStatement.setString(1, ref);
+            preparedStatement.setString(1, this.ref);
             preparedStatement.setInt(2, this.id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

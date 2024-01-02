@@ -1,4 +1,4 @@
-package fr.insa.developpement.views.modele.produits;
+package fr.insa.developpement.views.interne.produits;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
 import fr.insa.developpement.model.classes.Produit;
-import fr.insa.developpement.views.MainLayout;
+import fr.insa.developpement.views.interne.MainLayout;
 
 @PageTitle("Produits")
 @Route(value = "produits", layout = MainLayout.class)

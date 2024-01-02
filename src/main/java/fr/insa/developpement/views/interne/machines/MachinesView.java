@@ -1,9 +1,9 @@
-package fr.insa.developpement.views.modele.machines;
+package fr.insa.developpement.views.interne.machines;
 
 import fr.insa.developpement.model.classes.Machine;
 import fr.insa.developpement.model.classes.Realise;
 import fr.insa.developpement.model.classes.TypeOperation;
-import fr.insa.developpement.views.MainLayout;
+import fr.insa.developpement.views.interne.MainLayout;
 
 import com.vaadin.flow.component.dialog.Dialog;
 

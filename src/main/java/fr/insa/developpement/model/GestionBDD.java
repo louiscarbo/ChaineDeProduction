@@ -217,6 +217,14 @@ public class GestionBDD {
                 st.executeUpdate("drop table operation");
             } catch (SQLException ex) {
             }
+            try {
+                st.executeUpdate("drop table produit_commande");
+            } catch (SQLException ex) {
+            }
+            try {
+                st.executeUpdate("drop table commande");
+            } catch (SQLException ex) {
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-package fr.insa.developpement.views.modele.operations;
+package fr.insa.developpement.views.interne.operations;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
