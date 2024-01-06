@@ -35,6 +35,7 @@ import fr.insa.developpement.model.classes.Client;
 import fr.insa.developpement.model.classes.Commande;
 import fr.insa.developpement.views.HasRefreshGrid;
 import fr.insa.developpement.views.interne.MainLayout;
+import fr.insa.developpement.views.interne.produits.PlanFabricationOptimalDialog;
 
 @PageTitle("Commandes")
 @Route(value = "commandes", layout = MainLayout.class)
@@ -93,6 +94,18 @@ public class CommandesView extends Div implements HasRefreshGrid {
             })
         ).setHeader("Terminer");
         grid.addColumn(
+        new ComponentRenderer<>(Button::new, (button, commande) -> {
+            button.addThemeVariants(
+                ButtonVariant.LUMO_CONTRAST,
+                ButtonVariant.LUMO_PRIMARY);
+            button.addClickListener(e -> {
+                PlanFabricationOptimalDialog dialog = new PlanFabricationOptimalDialog(commande);
+                dialog.open();
+            });
+            button.setText("Calcul du plan");
+        })
+        ).setHeader("Plan fabrication");
+        grid.addColumn(
             new ComponentRenderer<Button, Commande>(Button::new, (button, commande) -> {
                 button.addThemeVariants(ButtonVariant.LUMO_ICON,
                     ButtonVariant.LUMO_ERROR,
@@ -138,9 +151,7 @@ public class CommandesView extends Div implements HasRefreshGrid {
 
     private Button createConfirmerCommandeButton(Commande commande) {
         Button button = new Button();
-        button.addThemeVariants(ButtonVariant.LUMO_ICON,
-            ButtonVariant.LUMO_SUCCESS,
-            ButtonVariant.LUMO_TERTIARY);
+        button.addThemeVariants(ButtonVariant.LUMO_ICON);
         button.addClickListener(e -> {
             ConfirmDialog dialog = new ConfirmDialog();
             dialog.setHeader("Marquer comme terminée");

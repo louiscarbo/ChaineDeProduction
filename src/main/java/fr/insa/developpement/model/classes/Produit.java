@@ -90,6 +90,23 @@ public class Produit {
             List<Produit> produits = new ArrayList<>();
 
             while (rs.next()) {
+                Produit produit = getProduitFromId(rs.getInt("id"));
+                if(produit != null) {
+                    produits.add(produit);
+                }
+            }
+
+            return produits;
+        }
+    }
+
+    public static Produit getProduitFromId(int id) throws SQLException {
+        Connection conn = GestionBDD.getConnection();
+        try (PreparedStatement pst1 = conn.prepareStatement("SELECT * FROM produit WHERE id = ?")) {
+            pst1.setInt(1, id);
+            ResultSet rs = pst1.executeQuery();
+
+            while(rs.next()) {
                 Produit produit = new Produit();
                 int idProduit = rs.getInt("id");
                 produit.setId(idProduit);
@@ -110,16 +127,14 @@ public class Produit {
 
                 // Crée la liste des étapes de fabrication
                 List<TypeOperation> etapesDeFabrication = new ArrayList<TypeOperation>();
-                for (int id: idsTypes) {
-                    etapesDeFabrication.add(TypeOperation.getTypeOperationFromId(id));
+                for (int idType: idsTypes) {
+                    etapesDeFabrication.add(TypeOperation.getTypeOperationFromId(idType));
                 }
                 produit.setEtapesFabrication(etapesDeFabrication);
-
-                produits.add(produit);
+                return produit;
             }
-
-            return produits;
         }
+        return null;
     }
 
     public List<Machine> calculPlanDeFabricationIdeal() throws SQLException {
@@ -137,6 +152,14 @@ public class Produit {
         }
 
         return machines;
+    }
+
+    public static double calculDureeDePlanFabrication(List<Machine> planDeFabrication) {
+        double duree = 0;
+        for(Machine machine: planDeFabrication) {
+            duree += machine.getDureeTypeOperation();
+        }
+        return duree;
     }
 
     public int getId() {

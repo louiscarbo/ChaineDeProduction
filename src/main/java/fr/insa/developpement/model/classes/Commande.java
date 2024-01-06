@@ -21,6 +21,7 @@ public class Commande {
     private Date date;
     private Client client;
     private boolean termine;
+    private Map<Produit, Integer> produitsQuantites = new HashMap<>();
 
     public boolean isTermine() {
         return termine;
@@ -33,10 +34,7 @@ public class Commande {
     public Map<Produit, Integer> getProduitsQuantites() {
         return produitsQuantites;
     }
-
-    // La liste quantités correspond aux quantités des produits pour un index donné
-    private Map<Produit, Integer> produitsQuantites = new HashMap<>();
-
+    
     public static List<Commande> getCommandes() throws SQLException {
         Connection conn = GestionBDD.getConnection();
         List<Commande> commandes = new ArrayList<>();
@@ -65,6 +63,16 @@ public class Commande {
                 commande.setClient(Client.getClientFromId(idClient));
                 boolean termine = rs.getBoolean("termine");
                 commande.setTermine(termine);
+
+                PreparedStatement ps = conn.prepareStatement("SELECT * FROM produit_commande WHERE idCommande = ?");
+                ps.setInt(1, id);
+                ResultSet rs2 = ps.executeQuery();
+                while (rs2.next()) {
+                    int idProduit = rs2.getInt("idProduit");
+                    int quantite = rs2.getInt("quantite");
+                    commande.addProduitQuantite(Map.entry(Produit.getProduitFromId(idProduit), quantite));
+                }
+
                 return commande;
             }
         }
@@ -185,5 +193,9 @@ public class Commande {
 
         con.commit();
         con.setAutoCommit(true);
+    }
+
+    public void addProduitQuantite(Map.Entry<Produit, Integer> produitQuantite) {
+        this.produitsQuantites.put(produitQuantite.getKey(), produitQuantite.getValue());
     }
 }
