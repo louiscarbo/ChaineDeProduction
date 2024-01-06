@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -18,6 +20,9 @@ public class Commande {
     private int id;
     private Date date;
     private Client client;
+
+    // La liste quantités correspond aux quantités des produits pour un index donné
+    private Map<Produit, Integer> produitsQuantites = new HashMap<>();
 
     public static List<Commande> getCommandes() throws SQLException {
         Connection conn = GestionBDD.getConnection();
@@ -84,6 +89,10 @@ public class Commande {
         this.date = dateCommande;
     }
 
+    public void setProduitsQuantites(Map<Produit, Integer> produitsQuantites) {
+        this.produitsQuantites = produitsQuantites;
+    }
+
     public Client getClient() {
         return client;
     }
@@ -116,5 +125,34 @@ public class Commande {
     public Commande() {
         this.id = 0;
         this.date = Date.valueOf(LocalDate.now());
-    }    
+    }
+
+    public void save() throws SQLException{
+        Connection con = GestionBDD.getConnection();
+        con.setAutoCommit(false);
+        
+        try (PreparedStatement pst = con.prepareStatement(
+                "INSERT INTO commande (idClient, dateCommande) VALUES (?, ?)")){
+            pst.setInt(1, this.client.getId());
+            pst.setDate(2, this.date);
+            pst.executeUpdate();
+        }
+
+        PreparedStatement pst = con.prepareStatement("SELECT MAX(id) AS latestId FROM commande");
+        ResultSet rs = pst.executeQuery();
+        rs.next();
+        int commandeID = rs.getInt("latestId");
+
+        // Sauvegarde du contenu de la commande
+        for (Map.Entry<Produit, Integer> entry: produitsQuantites.entrySet()) {
+            PreparedStatement realiseStatement = con.prepareStatement("INSERT INTO produit_commande (idCommande, idProduit, quantite) VALUES (?,?,?)");
+            realiseStatement.setInt(1, commandeID);
+            realiseStatement.setInt(2, entry.getKey().getId());
+            realiseStatement.setInt(3, entry.getValue());
+            realiseStatement.executeUpdate();
+        }
+
+        con.commit();
+        con.setAutoCommit(true);
+    }
 }

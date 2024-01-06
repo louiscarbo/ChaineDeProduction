@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import fr.insa.developpement.model.GestionBDD;
 
@@ -57,5 +59,20 @@ public class Client {
     }
     public void setNom(String nom) {
         this.nom = nom;
+    }
+
+    public static List<Client> getClients() throws SQLException {
+        Connection conn = GestionBDD.getConnection();
+        List<Client> clients = new ArrayList<>();
+        try (ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM client")) {
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                Client client = getClientFromId(id);
+                if (client != null) {
+                    clients.add(client);
+                }
+            }
+        }
+        return clients;
     }
 }

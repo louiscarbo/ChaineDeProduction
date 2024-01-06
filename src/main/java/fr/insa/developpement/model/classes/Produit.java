@@ -81,7 +81,7 @@ public class Produit {
         }
     }
 
-    public static List<Produit> getProduitsFromServer() throws SQLException {
+    public static List<Produit> getProduits() throws SQLException {
         Connection conn = GestionBDD.getConnection();
 
         try (Statement st = conn.createStatement()) {

@@ -148,7 +148,7 @@ public class ProduitsView extends Div {
 
     private void refreshProduits() {
         try {
-            this.produits = Produit.getProduitsFromServer();
+            this.produits = Produit.getProduits();
         } catch(SQLException exception) {
             Notification.show("Erreur lors de la récupération des produits depuis le serveur : " + exception.getLocalizedMessage());
         }
@@ -156,7 +156,7 @@ public class ProduitsView extends Div {
 
     public void refreshGrid() {
         try {
-            this.produits = Produit.getProduitsFromServer();
+            this.produits = Produit.getProduits();
             grid.setItems(produits);
             Notification.show("Liste des produits mise à jour avec succès.");
         } catch(SQLException exception) {

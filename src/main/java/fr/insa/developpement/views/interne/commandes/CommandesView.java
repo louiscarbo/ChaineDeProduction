@@ -3,6 +3,7 @@ package fr.insa.developpement.views.interne.commandes;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Focusable;
@@ -28,13 +29,15 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
+import fr.insa.developpement.model.classes.Client;
 import fr.insa.developpement.model.classes.Commande;
+import fr.insa.developpement.views.HasRefreshGrid;
 import fr.insa.developpement.views.interne.MainLayout;
 
 @PageTitle("Commandes")
 @Route(value = "commandes", layout = MainLayout.class)
 @Uses(Icon.class)
-public class CommandesView extends Div {
+public class CommandesView extends Div implements HasRefreshGrid {
 
     private Grid<Commande> grid;
     private List<Commande> commandes = new ArrayList<>();
@@ -157,9 +160,9 @@ public class CommandesView extends Div {
             "Ajouter une commande",
             new Icon(VaadinIcon.PLUS),
             e -> {
-                // TODO Créer un dialogue pour ajouter une nouvelle commande
-                // Dialog dialog = new NewCommandeDialog(this);
-                // dialog.open();
+                Optional<Client> optionalClient = Optional.empty();
+                Dialog dialog = new NewCommandeDialog(this, optionalClient);
+                dialog.open();
             }
         );
         button.addClassName("commandes-view-button-1");
