@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
+
 import fr.insa.developpement.model.GestionBDD;
 
 public class Client {
@@ -74,5 +77,37 @@ public class Client {
             }
         }
         return clients;
+    }
+
+    public void changeNom(String nom) {
+        setNom(nom);
+        Connection connection = GestionBDD.getConnection();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                "UPDATE client SET nom = ? WHERE id = ?"
+            );
+            preparedStatement.setString(1, nom);
+            preparedStatement.setInt(2, this.id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            Notification error = Notification.show("Une erreur est survenue lors du changement du nom du client : " + e.getLocalizedMessage());
+            error.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }
+    }
+
+    public void delete() throws SQLException {
+        Connection con = GestionBDD.getConnection();
+        PreparedStatement pst1 = con.prepareStatement("DELETE FROM client WHERE id = ?");
+        pst1.setInt(1, this.id);
+        pst1.executeUpdate();
+    }
+
+    public void save() throws SQLException{
+        Connection con = GestionBDD.getConnection();        
+        try (PreparedStatement pst = con.prepareStatement(
+                "INSERT INTO client (nom) VALUES (?)")){
+            pst.setString(1, this.nom);
+            pst.executeUpdate();
+        }
     }
 }

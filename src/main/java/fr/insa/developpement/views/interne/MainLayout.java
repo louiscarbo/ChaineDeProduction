@@ -63,9 +63,10 @@ public class MainLayout extends AppLayout {
         modeleSideNav.addItem(new SideNavItem("Machines", "machines", VaadinIcon.FACTORY.create()));
         modeleSideNav.addItem(new SideNavItem("Types d'Opérations", "type-operations", VaadinIcon.COGS.create()));
         modeleSideNav.addItem(new SideNavItem("Produits", "produits", VaadinIcon.PACKAGE.create()));
-        modeleSideNav.addItem(new SideNavItem("Opérateurs", "operateurs", VaadinIcon.GROUP.create()));
-        modeleSideNav.addItem(new SideNavItem("Stock", "stock", VaadinIcon.STOCK.create()));
+        // modeleSideNav.addItem(new SideNavItem("Opérateurs", "operateurs", VaadinIcon.GROUP.create()));
+        // modeleSideNav.addItem(new SideNavItem("Stock", "stock", VaadinIcon.STOCK.create()));
         modeleSideNav.addItem(new SideNavItem("Commandes", "commandes", VaadinIcon.INVOICE.create()));
+        modeleSideNav.addItem(new SideNavItem("Clients", "clients", VaadinIcon.USERS.create()));
 
         return modeleSideNav;
     }

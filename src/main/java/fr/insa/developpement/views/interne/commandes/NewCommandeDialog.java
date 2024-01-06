@@ -33,7 +33,6 @@ import fr.insa.developpement.model.classes.Client;
 import fr.insa.developpement.model.classes.Commande;
 import fr.insa.developpement.model.classes.Produit;
 import fr.insa.developpement.views.HasRefreshGrid;
-import fr.insa.developpement.views.externe.EspaceDeCommande;
 
 public class NewCommandeDialog extends Dialog {
 
@@ -50,27 +49,6 @@ public class NewCommandeDialog extends Dialog {
 
     public NewCommandeDialog(HasRefreshGrid parentView, Optional<Client> clientConnecte) {
         this.parentView = parentView;
-        this.clientConnecte = clientConnecte;
-
-        this.setHeaderTitle("Nouvelle Commande");
-
-        VerticalLayout dialogLayout = createDialogLayout();
-        this.add(dialogLayout);
-
-        this.saveButton = createSaveButton(this);
-        this.saveButton.setEnabled(false);
-        
-        Button cancelButton = new Button("Annuler", e -> this.close());
-        this.getFooter().add(cancelButton);
-        this.getFooter().add(saveButton);
-
-        enableOrDisableSaveButton();
-        this.setWidthFull();
-        this.setMaxWidth("500px");
-    }
-
-    public NewCommandeDialog(EspaceDeCommande commandesView, Optional<Client> clientConnecte) {
-        this.parentView = commandesView;
         this.clientConnecte = clientConnecte;
 
         this.setHeaderTitle("Nouvelle Commande");

@@ -25,7 +25,6 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
@@ -76,10 +75,10 @@ public class CommandesView extends Div implements HasRefreshGrid {
         grid.addColumn(new ComponentRenderer<Text, Commande>(commande -> {
             return new Text(String.valueOf(commande.getClient().getId()));
         })).setHeader("Identifiant Client");
-        Grid.Column<Commande> etatColumn = grid.addColumn(new ComponentRenderer<Span, Commande>(commande -> {
+        grid.addColumn(new ComponentRenderer<Span, Commande>(commande -> {
             Span span = new Span();
             if (commande.isTermine()) {
-                span.add("Terminé");
+                span.add("Terminée");
                 span.getElement().getThemeList().add("badge success");
                 return span;
             } else {
@@ -92,7 +91,7 @@ public class CommandesView extends Div implements HasRefreshGrid {
             new ComponentRenderer<Button, Commande>(commande -> {
                 return createConfirmerCommandeButton(commande);
             })
-        ).setHeader("Marquer comme terminée");
+        ).setHeader("Terminer");
         grid.addColumn(
             new ComponentRenderer<Button, Commande>(Button::new, (button, commande) -> {
                 button.addThemeVariants(ButtonVariant.LUMO_ICON,
@@ -144,18 +143,19 @@ public class CommandesView extends Div implements HasRefreshGrid {
             ButtonVariant.LUMO_TERTIARY);
         button.addClickListener(e -> {
             ConfirmDialog dialog = new ConfirmDialog();
-            dialog.setHeader("Terminer");
-            dialog.setText(
-                    "Vous êtes sur le point de marquer cette commande comme terminée. Êtes-vous sûr ?");
+            dialog.setHeader("Marquer comme terminée");
+            dialog.setText("Vous êtes sur le point de marquer cette commande comme terminée. Êtes-vous sûr ?");
 
             dialog.setCancelable(true);
             dialog.setCancelText("Annuler");
 
             dialog.setConfirmText("Oui");
-            dialog.addConfirmListener(event -> commande.changeTermine(true));
+            dialog.addConfirmListener(event -> {
+                commande.changeTermine(true);
+                refreshGrid();
+            });
 
             dialog.open();
-            refreshGrid();
         });
         button.setIcon(new Icon(VaadinIcon.CHECK));
         if(!commande.isTermine()) {
