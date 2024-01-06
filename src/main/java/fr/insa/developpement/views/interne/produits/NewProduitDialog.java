@@ -61,7 +61,7 @@ public class NewProduitDialog extends Dialog {
     }
 
     private VerticalLayout createDialogLayout() {
-        this.referenceField = new TextField("Nom");
+        this.referenceField = new TextField("Référence");
         this.descriptionField = new TextField("Description");
         Text label = new Text("Étapes de fabrication");
         this.operationsGrids = new OperationsGrids();

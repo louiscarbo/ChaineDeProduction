@@ -20,6 +20,19 @@ public class Commande {
     private int id;
     private Date date;
     private Client client;
+    private boolean termine;
+
+    public boolean isTermine() {
+        return termine;
+    }
+
+    public void setTermine(boolean termine) {
+        this.termine = termine;
+    }
+
+    public Map<Produit, Integer> getProduitsQuantites() {
+        return produitsQuantites;
+    }
 
     // La liste quantités correspond aux quantités des produits pour un index donné
     private Map<Produit, Integer> produitsQuantites = new HashMap<>();
@@ -50,6 +63,8 @@ public class Commande {
                 int idClient = rs.getInt("idClient");
                 Commande commande = new Commande(id, dateCommande);
                 commande.setClient(Client.getClientFromId(idClient));
+                boolean termine = rs.getBoolean("termine");
+                commande.setTermine(termine);
                 return commande;
             }
         }
@@ -113,6 +128,22 @@ public class Commande {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             Notification error = Notification.show("Une erreur est survenue lors du changement de la date de la commande : " + e.getLocalizedMessage());
+            error.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }
+    }
+
+    public void changeTermine(boolean termine) {
+        setTermine(termine);
+        Connection connection = GestionBDD.getConnection();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                "UPDATE commande SET termine = ? WHERE id = ?"
+            );
+            preparedStatement.setBoolean(1, this.termine);
+            preparedStatement.setInt(2, this.id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            Notification error = Notification.show("Une erreur est survenue lors du changement du statut de la commande : " + e.getLocalizedMessage());
             error.addThemeVariants(NotificationVariant.LUMO_ERROR);
         }
     }
