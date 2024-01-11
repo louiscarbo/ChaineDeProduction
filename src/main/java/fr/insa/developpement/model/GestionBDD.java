@@ -250,26 +250,72 @@ public class GestionBDD {
 
     public static void initTest(){
         try {
-            Machine newMachine = new Machine("Drill", "MCH001", 1500);
+            Machine newMachine = new Machine("Mélangeur", "MLG01", 100);
+            newMachine.setDureeTypeOperation(5);
             newMachine.save();
 
-            TypeOperation t1= new TypeOperation("Fraisage", "Enlèvement de matière");
+            newMachine = new Machine("Pétrin", "PTRN01", 100);
+            newMachine.setDureeTypeOperation(30);
+            newMachine.save();
+
+            newMachine = new Machine("Presse à donuts", "PRS01", 100);
+            newMachine.setDureeTypeOperation(0.5);
+            newMachine.save();
+
+            newMachine = new Machine("Friteuse", "FTR01", 100);
+            newMachine.setDureeTypeOperation(1);
+            newMachine.save();
+
+            newMachine = new Machine("Glaceuse", "GLC01", 100);
+            newMachine.setDureeTypeOperation(0.5);
+            newMachine.save();
+
+            newMachine = new Machine("Presse à beignets", "PRS02", 100);
+            newMachine.setDureeTypeOperation(0.5);
+            newMachine.save();
+
+            newMachine = new Machine("Fourreuse à beignets", "FRS01", 100);
+            newMachine.setDureeTypeOperation(0.5);
+            newMachine.save();
+
+            newMachine = new Machine("Saupoudreuse", "SPDR01", 100);
+            newMachine.setDureeTypeOperation(0.5);
+            newMachine.save();
+
+            TypeOperation t1= new TypeOperation("Mélange", "Mélange des différents ingrédients.");
             t1.addMachine(Machine.getMachineFromId(1));
             t1.save();
 
-            Machine newMachine2 = new Machine("Lathe", "MCH002", 5000);
-            newMachine2.save();
+            t1= new TypeOperation("Pétrissage", "Pétrissage de la pâte");
+            t1.addMachine(Machine.getMachineFromId(2));
+            t1.save();
+
+            t1= new TypeOperation("Formation du donut", "Mise en forme du donut");
+            t1.addMachine(Machine.getMachineFromId(3));
+            t1.save();
+
+            t1= new TypeOperation("Friture", "Friture du donut");
+            t1.addMachine(Machine.getMachineFromId(4));
+            t1.save();
+
+            t1= new TypeOperation("Glaçage", "Ajout du glaçage sur le donut");
+            t1.addMachine(Machine.getMachineFromId(5));
+            t1.save();
+
+            t1= new TypeOperation("Formation du beignet", "Mise en forme du beignet");
+            t1.addMachine(Machine.getMachineFromId(6));
+            t1.save();
+
+            t1= new TypeOperation("Fourrage", "Ajout du chocolat dans le beignet");
+            t1.addMachine(Machine.getMachineFromId(7));
+            t1.save();
+
+            t1= new TypeOperation("Saupoudrage", "Ajout du sucre perles sur le produit");
+            t1.addMachine(Machine.getMachineFromId(8));
+            t1.save();
 
         } catch (SQLException exc) {
             System.out.println("ERREUR t1.save " + exc.getLocalizedMessage());
-        }
-
-        try {
-            Machine m1 =new Machine(1, "rapide","F01", 20.0);
-            m1.setDureeTypeOperation(5);
-            m1.save();
-        } catch(SQLException exc) {
-            System.out.println("ERREUR m1.save " + exc.getLocalizedMessage());
         }
    }  
     

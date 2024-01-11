@@ -1,1 +1,38 @@
-@import "theme-editor.css";
+@import url('./main-layout.css');
+@import url('@fontsource/quicksand/index.css');    html {
+      --lumo-primary-color: hsl(331, 80%, 55%);
+      --lumo-primary-color-50pct: hsla(331, 80%, 55%, 0.5);
+      --lumo-primary-color-10pct: hsla(331, 80%, 55%, 0.1);
+      --lumo-primary-text-color: hsl(331, 79%, 58%);
+      --lumo-shade: hsl(29, 100%, 19%);
+      --lumo-shade-5pct: hsla(29, 100%, 50%, 0.05);
+      --lumo-shade-10pct: hsla(29, 100%, 50%, 0.1);
+      --lumo-shade-20pct: hsla(29, 100%, 50%, 0.2);
+      --lumo-shade-30pct: hsla(29, 100%, 50%, 0.3);
+      --lumo-shade-40pct: hsla(29, 100%, 50%, 0.4);
+      --lumo-shade-50pct: hsla(29, 100%, 50%, 0.5);
+      --lumo-shade-60pct: hsla(29, 100%, 50%, 0.6);
+      --lumo-shade-70pct: hsla(29, 100%, 29%, 0.7);
+      --lumo-shade-80pct: hsla(29, 100%, 33%, 0.8);
+      --lumo-shade-90pct: hsla(29, 100%, 18%, 0.9);
+
+    }
+
+    [theme~="dark"] {
+      --lumo-primary-color: hsl(331, 80%, 55%);
+      --lumo-primary-color-50pct: hsla(331, 80%, 55%, 0.5);
+      --lumo-primary-color-10pct: hsla(331, 80%, 55%, 0.1);
+      --lumo-primary-text-color: hsl(331, 80%, 55%);
+      --lumo-shade: hsl(29, 100%, 50%);
+      --lumo-shade-5pct: hsla(29, 100%, 50%, 0.05);
+      --lumo-shade-10pct: hsla(29, 100%, 50%, 0.1);
+      --lumo-shade-20pct: hsla(29, 100%, 50%, 0.2);
+      --lumo-shade-30pct: hsla(29, 100%, 50%, 0.3);
+      --lumo-shade-40pct: hsla(29, 100%, 50%, 0.4);
+      --lumo-shade-50pct: hsla(29, 100%, 50%, 0.5);
+      --lumo-shade-60pct: hsla(29, 100%, 50%, 0.6);
+      --lumo-shade-70pct: hsla(29, 100%, 50%, 0.7);
+      --lumo-shade-80pct: hsla(29, 100%, 50%, 0.8);
+      --lumo-shade-90pct: hsla(29, 100%, 50%, 0.9);
+
+    }
