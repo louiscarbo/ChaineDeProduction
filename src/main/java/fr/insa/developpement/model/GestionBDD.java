@@ -250,36 +250,28 @@ public class GestionBDD {
 
     public static void initTest(){
         try {
-            Machine newMachine = new Machine("Mélangeur", "MLG01", 100);
-            newMachine.setDureeTypeOperation(5);
+            Machine newMachine = new Machine("Mélangeur", "MLG01", 300, 5);
             newMachine.save();
 
-            newMachine = new Machine("Pétrin", "PTRN01", 100);
-            newMachine.setDureeTypeOperation(30);
+            newMachine = new Machine("Pétrin", "PTRN01", 350, 30);
             newMachine.save();
 
-            newMachine = new Machine("Presse à donuts", "PRS01", 100);
-            newMachine.setDureeTypeOperation(0.5);
+            newMachine = new Machine("Presse à donuts", "PRS01", 100, 0.5);
             newMachine.save();
 
-            newMachine = new Machine("Friteuse", "FTR01", 100);
-            newMachine.setDureeTypeOperation(1);
+            newMachine = new Machine("Friteuse", "FTR01", 200, 1);
             newMachine.save();
 
-            newMachine = new Machine("Glaceuse", "GLC01", 100);
-            newMachine.setDureeTypeOperation(0.5);
+            newMachine = new Machine("Glaceuse", "GLC01", 100, 0.5);
             newMachine.save();
 
-            newMachine = new Machine("Presse à beignets", "PRS02", 100);
-            newMachine.setDureeTypeOperation(0.5);
+            newMachine = new Machine("Presse à beignets", "PRS02", 200, 0.5);
             newMachine.save();
 
-            newMachine = new Machine("Fourreuse à beignets", "FRS01", 100);
-            newMachine.setDureeTypeOperation(0.5);
+            newMachine = new Machine("Fourreuse à beignets", "FRS01", 150, 0.5);
             newMachine.save();
 
-            newMachine = new Machine("Saupoudreuse", "SPDR01", 100);
-            newMachine.setDureeTypeOperation(0.5);
+            newMachine = new Machine("Saupoudreuse", "SPDR01", 100, 0.5);
             newMachine.save();
 
             TypeOperation t1= new TypeOperation("Mélange", "Mélange des différents ingrédients.");

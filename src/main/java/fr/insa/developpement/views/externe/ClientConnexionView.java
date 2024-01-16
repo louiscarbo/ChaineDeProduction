@@ -39,7 +39,7 @@ public class ClientConnexionView extends Div {
         loginOverlay.addLoginListener(e -> {
             if(loginOverlay.getUI().isPresent()) {
                 System.out.println("\n\n\n" + loginOverlay.getId());
-                loginOverlay.getUI().get().navigate("client-commande/" + loginOverlay.getId());
+                loginOverlay.getUI().get().navigate("client-commande/" + 1);
             }
         });
 

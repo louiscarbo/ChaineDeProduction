@@ -22,11 +22,15 @@ public class Machine {
     private double dureeTypeOperation;
 
     public Machine(int id, String des, String ref, double puissance) {
-        this(id, des, ref, puissance, null, 30);
+        this(id, des, ref, puissance, null, 15);
     }
 
     public Machine(String des, String ref, double puissance) {
         this(-1, des, ref, puissance);
+    }
+
+    public Machine(String des, String ref, double puissance, double duree) {
+        this(-1, des, ref, puissance, null, duree);
     }
 
     public Machine(String des, String ref, double puissance, TypeOperation typeOperation, double dureeTypeOperation) {
@@ -43,7 +47,7 @@ public class Machine {
     }
 
     public Machine() {
-        this(-1, "", "", 0, null, 30);
+        this(-1, "", "", 0, null, 10);
     }
 
     public void save() throws SQLException{
@@ -121,11 +125,12 @@ public class Machine {
 
                 // Récupération du typeOperation
                 try (PreparedStatement ps = conn.prepareStatement(
-                        "SELECT idType FROM realise WHERE idMachine = ?")) {
+                        "SELECT * FROM realise WHERE idMachine = ?")) {
                     ps.setInt(1, machine.getId());
                     ResultSet rs2 = ps.executeQuery();
                     while (rs2.next()) {
                         int possibleID = rs2.getInt("idType");
+                        machine.setDureeTypeOperation(rs2.getDouble("duree"));
                         if(possibleID != 0) {
                             machine.setTypeOperation(TypeOperation.getSimpleTypeOperationFromId(possibleID));
                         }
@@ -166,6 +171,7 @@ public class Machine {
                 machine.setDes(rs.getString("des"));
                 machine.setRef(rs.getString("ref"));
                 machine.setPuissance(rs.getDouble("puissance"));
+                machine.setDureeTypeOperation(rs.getDouble("duree"));
 
                 machines.add(machine);
             }

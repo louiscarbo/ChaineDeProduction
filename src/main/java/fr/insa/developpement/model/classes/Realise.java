@@ -11,6 +11,7 @@ public class Realise {
     public static void deleteRealiseFromIdMachine(int idMachine) throws SQLException {
         Connection con = GestionBDD.getConnection();
         PreparedStatement pst1 = con.prepareStatement("DELETE FROM realise WHERE idMachine = ?");
+        
         pst1.setInt(1, idMachine);
         pst1.executeUpdate();
     }

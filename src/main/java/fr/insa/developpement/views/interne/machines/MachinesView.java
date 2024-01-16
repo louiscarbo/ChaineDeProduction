@@ -160,7 +160,7 @@ public class MachinesView extends Div {
         Dialog dialog = new Dialog("Êtes vous sûr ?");
         dialog.setMaxWidth("400px");
         String body = machine.hasTypeOperation()?
-            new String("Cette machine est liée à un type d'opération. En supprimant cette machine, vous supprimerez également le type d'opération lié à cette machine. Êtes-vous sûr ?")
+            new String("Cette machine est liée à un type d'opération. En supprimant cette machine, vous supprimerez également le lien entre les deux. Êtes-vous sûr ?")
             : new String("Vous êtes sur le point de supprimer une machine. En êtes vous sûr ?");
         dialog.add(body);
 
@@ -184,7 +184,6 @@ public class MachinesView extends Div {
         try {
             if(machine.hasTypeOperation()){
                 Realise.deleteRealiseFromIdMachine(machine.getId());
-                machine.getTypeOperation().delete();
                 machine.delete();
             } else {
                 machine.delete();
